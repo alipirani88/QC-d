@@ -1,11 +1,6 @@
 # Coverage, Quality and Contamination Analysis Pipeline
 
-```
-usage: pipeline.py [-h] [-samples SAMPLES] [-config CONFIG] [-dir DIRECTORY]
-                   [-analysis ANALYSIS_NAMES] [-o OUTPUT_FOLDER] [-type TYPE]
-                   [-cluster CLUSTER] [-genome_size SIZE] [-prefix PREFIX]
-                   [-reference REFERENCE]
-```
+---
 
 
 ### This pipeline takes a file containing names of single/paired end fastq files and the type of analysis to be performed: 
