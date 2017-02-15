@@ -69,7 +69,7 @@ The output folder will contain the following results depending on the analysis p
 
 1. coverage: prefix_Final_Coverage.txt 
 2. quality: Fastqc and multiqc reports for each forward and reverse reads in a folder named prefix_Fastqc
-3. screen_contamination: 
-4. kraken_contamination
-5. kraken_report
+3. screen_contamination: Fastq screen .txt files(reads mapped) and Multiqc report for all the samples
+4. kraken_contamination: Kraken results(_kraken) and unclassified reads(_unclassified.txt). 
+5. kraken_report: Kraken_report_final.csv generated from kraken report and containing names of most abundant species(only the highest percentage) in each fastq files.
 6. coverage_depth
