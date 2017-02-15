@@ -62,3 +62,14 @@
 ```
 
 **Note: Since Fastq screen and Kraken can be resource and time intensive, the pipeline can run individual jobs on cluster(supports PBS cluster only) or can also run multiple jobs jobs on local multiple cores.**
+
+## Results:
+
+The output folder will contain the following results depending on the analysis performed:
+
+1. coverage: prefix_Final_Coverage.txt 
+2. quality: Fastqc and multiqc reports for each forward and reverse reads in a folder named prefix_Fastqc
+3. screen_contamination: 
+4. kraken_contamination
+5. kraken_report
+6. coverage_depth
