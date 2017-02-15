@@ -60,3 +60,5 @@
 
 
 ```
+
+*** Note: Since Fastq screen and Kraken can be resource and time intensive, the pipeline can run individual jobs on cluster(supports PBS cluster only) or can also run multiple jobs jobs on local multiple cores.***
