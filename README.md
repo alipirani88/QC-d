@@ -32,20 +32,29 @@
 
   -samples SAMPLES      Filenames of forward-paired end reads. ***One per
                         line***
+                        
   -config CONFIG        Path to Config file
+  
   -dir DIRECTORY        Directory of Fastq Files
+  
   -analysis ANALYSIS_NAMES
                         COMMA-SEPERATED ANALYSIS_NAMES[coverage, quality,
                         screen_contamination, kraken_contamination,
-                        kraken_report, coverage_depth]. Ex: -analysis coverage
+                        kraken_report, coverage_depth]. Ex: -analysis coverage or -analysis coverage, quality
+                        
   -o OUTPUT_FOLDER      Output Path ending with output directory name to save
                         the results
+                                   
   -type TYPE            Type of analysis: SE or PE
+  
   -cluster CLUSTER      Run Fastq_screen and Kraken on cluster/parallel-
                         local/local. Make Sure to check if the [CLUSTER]
                         section in config file is set up correctly.
+                        
   -genome_size SIZE     Estimated Genome Size
+  
   -prefix PREFIX        Prefix to use to save results files
+  
   -reference REFERENCE  Reference genome to use to map against for calculating
                         the depth
 
