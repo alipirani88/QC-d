@@ -1,28 +1,22 @@
 # Coverage, Quality and Contamination Analysis Pipeline
 
----
+***
 
+**The pipeline takes a file containing names of single/paired end fastq files and the type of analysis to be performed:**
 
-### This pipeline takes a file containing names of single/paired end fastq files and the type of analysis to be performed: 
+**coverage:** calculates raw coverage for the given fastq samples.(need genome size; therefor its better to have a filename/samples with only one type of species)
 
+**quality:** generates fastqc quality report of all the fastq files in the filename(It also generates a multiqc report of these fastqc results)
 
-coverage: calculates raw coverage for the given fastq samples.(need genome size; therefor its better to have a filename/samples with only one type of species)
+**screen_contamination:** runs fastq screen against the reference database(make sure you have checked the database path in fastq_screen config file as well as path to these config file has to be mentioned in the pipeline's config file)
 
-quality : generates fastqc quality report of all the fastq files in the filename(It also generates a multiqc report of these fastqc results)
+**kraken_contamination:** Run Kraken(minikraken db only) to determine the most abundant species. Useful to determine contamination
 
-screen_contamination: runs fastq screen against the reference database(make sure you have checked the database path in fastq_screen config file as well as path to these config file has to be mentioned in the pipeline's config file)
+**kraken_report:** Generate user-friendly Kraken report and krona plots from Kraken results
 
-kraken_contamination: Run Kraken(minikraken db only) to determine the most abundant species. Useful to determine contamination
+**coverage_depth:** Determine the depth of coverage(GATK) by mapping the reads against your choice of reference genome(check the path to reference genome in pipeline's config file)
 
-kraken_report: Generate user-friendly Kraken report and krona plots from Kraken results
-
-coverage_depth: Determine the depth of coverage(GATK) by mapping the reads against your choice of reference genome(check the path to reference genome in pipeline's config file)
-
-
-```
-
-
-- optional arguments:
+- **optional arguments:**
 
 
 ```
@@ -31,7 +25,8 @@ coverage_depth: Determine the depth of coverage(GATK) by mapping the reads again
 
 ```
 
--Required arguments:
+- **Required arguments:**
+
 
 ```
 
