@@ -3,7 +3,7 @@ import os
 import subprocess
 import statistics
 from modules.log_modules import keep_logging
-from modules.logging_subprocess import *
+from logging_subprocess import *
 from config_settings import ConfigSectionMap
 from itertools import izip
 

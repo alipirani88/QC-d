@@ -11,7 +11,7 @@ import sys
 import errno
 import glob
 from modules.log_modules import  *
-from modules.logging_subprocess import *
+from logging_subprocess import *
 from config_settings import ConfigSectionMap
 from modules.coverage import *
 from modules.quality import *

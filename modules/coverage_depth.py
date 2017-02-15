@@ -2,7 +2,7 @@ __author__ = 'alipirani'
 import os
 import subprocess
 from modules.log_modules import keep_logging
-from modules.logging_subprocess import *
+from logging_subprocess import *
 from config_settings import ConfigSectionMap
 from modules.generate_cluster_jobs import *
 from modules.bwa import align_bwa

@@ -3,7 +3,7 @@ import os
 from config_settings import ConfigSectionMap
 import subprocess
 from modules.log_modules import keep_logging
-from modules.logging_subprocess import *
+from logging_subprocess import *
 
 def krona_visualization(kraken_out, Config, logger, kraken_directory, cluster):
     keep_logging("Preparing Krona Input file from Kraken results...", "Preparing Krona Input file from Kraken results...", logger, 'info')

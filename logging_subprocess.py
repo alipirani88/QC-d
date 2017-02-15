@@ -1,9 +1,6 @@
 # Source: https://gist.github.com/hangtwenty/6390750
 import sys
-if sys.version_info < (3, 2):
-    import subprocess32 as sp
-else:
-    import subprocess as sp
+import subprocess as sp
 import select
 import logging
 from logging import DEBUG, ERROR
