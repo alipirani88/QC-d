@@ -4,7 +4,7 @@
 
 **The pipeline takes a file containing names of single/paired end fastq files and the type of analysis to be performed:**
 
-**coverage:** calculates raw coverage for the given fastq samples.(need genome size; therefor its better to have a filename/samples with only one type of species)
+**coverage:** calculates raw coverage for the given fastq samples.(need genome size; therefore its better to have a filename/samples with only one type of species)
 
 **quality:** generates fastqc quality report of all the fastq files in the filename(It also generates a multiqc report of these fastqc results)
 
@@ -71,5 +71,6 @@ The output folder will contain the following results depending on the analysis p
 2. quality: Fastqc and multiqc reports for each forward and reverse reads in a folder named prefix_Fastqc
 3. screen_contamination: Fastq screen .txt files(reads mapped) and Multiqc report for all the samples
 4. kraken_contamination: Kraken results(_kraken) and unclassified reads(_unclassified.txt). 
-5. kraken_report: Kraken_report_final.csv generated from kraken report and containing names of most abundant species(only the highest percentage) in each fastq files.
-6. coverage_depth
+5. kraken_report: prefix_Kraken_report_final.csv generated from kraken report and containing names of most abundant species(only the highest percentage) in each fastq files.
+6. coverage_depth: GATK depth_of_coverage statistics for each sample against the reference genome and combined report of coverage depth prefix_Final_Coverage_depth.txt.
+
