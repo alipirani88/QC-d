@@ -13,17 +13,19 @@
 **The pipeline takes following analysis options:**
 ***
 
-**coverage:** calculates raw coverage for the given fastq samples.(need genome size; therefore its better to have a filename/samples with only one type of species)
+> **coverage:** calculates raw coverage for the given fastq samples.(need genome size; therefore its better to have a filename/samples with only one type of species)
 
-**quality:** generates fastqc quality report of all the fastq files in the filename(It also generates a multiqc report of these fastqc results)
+> **quality:** generates fastqc quality report of all the fastq files in the filename(It also generates a multiqc report of these fastqc results)
 
-**screen_contamination:** runs fastq screen against the reference database(make sure you have checked the database path in fastq_screen config file as well as path to these config file has to be mentioned in the pipeline's config file)
+> **screen_contamination:** runs fastq screen against the reference database(make sure you have checked the database path in fastq_screen config file as well as path to these config file has to be mentioned in the pipeline's config file)
 
-**kraken_contamination:** Run Kraken(minikraken db only) to determine the most abundant species. Useful to determine contamination
+> **kraken_contamination:** Run Kraken(minikraken db only) to determine the most abundant species. Useful to determine contamination
 
-**kraken_report:** Generate user-friendly Kraken report and krona plots from Kraken results
+> **kraken_report:** Generate user-friendly Kraken report and krona plots from Kraken results
 
-**coverage_depth:** Determine the depth of coverage(GATK) by mapping the reads against your choice of reference genome(check the path to reference genome in pipeline's config file)
+> **coverage_depth:** Determine the depth of coverage(GATK) by mapping the reads against your choice of reference genome(check the path to reference genome in pipeline's config file)
+
+<br>
 
 - **optional arguments:**
 
