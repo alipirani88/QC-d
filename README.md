@@ -2,7 +2,10 @@
 
 ***
 
-**The pipeline takes a file containing names of single/paired end fastq files and the type of analysis to be performed:**
+### This pipeline takes a file containing names of single/paired end fastq files and the type of analysis to be performed.
+
+**The pipeline takes following types of analysis options:**
+***
 
 **coverage:** calculates raw coverage for the given fastq samples.(need genome size; therefore its better to have a filename/samples with only one type of species)
 
