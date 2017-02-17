@@ -2,7 +2,7 @@
 
 ***
 
-### Analysis pipeline to calculate raw reads coverage, quality assessment, screening reads against reference genomes, screening reads against minikraken database, generating kraken report and calculating coverage depth by aligning reads against reference genome. it requires a file containing names of single/paired end fastq files and the type of analysis to be performed.
+#### Analysis pipeline to calculate raw reads coverage, quality assessment, screening reads against reference genomes, screening reads against minikraken database, generating kraken report and calculating coverage depth by aligning reads against reference genome. it requires a file containing names of single/paired end fastq files and the type of analysis to be performed.
 <br>
 <br>
 <br>
