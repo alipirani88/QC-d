@@ -55,8 +55,8 @@
   
   -prefix PREFIX        Prefix to use to save results files
   
-  -reference REFERENCE  Reference genome to use to map against for calculating
-                        the depth
+  -reference REFERENCE  Reference genome for calculating coverage depth
+                        
 
 
 ```
