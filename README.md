@@ -32,6 +32,9 @@
   
   -h, --help            show this help message and exit
   -config CONFIG        Path to Pipeline Config file
+  -cluster CLUSTER      Run Fastq_screen and Kraken on cluster/parallel-
+                        local/local. Make Sure to check if the [CLUSTER]
+                        section settings in config file is set up properly.
   
 ```
 
