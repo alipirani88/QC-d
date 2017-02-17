@@ -1,14 +1,12 @@
 # Coverage, Quality and Contamination Analysis Pipeline
 
 ***
+<br>
 
 #### <i>Analysis pipeline to calculate raw reads coverage, quality assessment, screening reads against reference genomes or minikraken database for determining contamination, generating kraken/krona report and calculating coverage depth by aligning reads against reference genome. 
 
 #### It requires a file containing names of single/paired end fastq files and the type of analysis to be performed.</i>
 <br>
-<br>
-
-
 
 **The pipeline takes following analysis options:**
 ***
@@ -39,7 +37,7 @@
                         section settings in config file is set up properly.
   
 ```
-
+<br>
 - **Required arguments:**
 
 
@@ -75,17 +73,20 @@
 
 
 ```
+<br>
 
-**Note: Since Fastq screen and Kraken can be resource and time intensive, the pipeline can run individual jobs on cluster(supports PBS cluster only) or can also run multiple jobs jobs on local multiple cores.**
+**Note: Since Fastq screen and Kraken can be resource and time intensive, the pipeline can run individual jobs on cluster(supports PBS cluster only) or can also run multiple jobs on local multiple cores.**
+<br>
 
-## Results:
+#### Results:
 
-The output folder will contain the following results depending on the analysis performed:
+** The output folder will contain the following results depending on the analysis performed:**
+***
 
-1. coverage: prefix_Final_Coverage.txt 
-2. quality: Fastqc and multiqc reports for each forward and reverse reads in a folder named prefix_Fastqc
-3. screen_contamination: Fastq screen .txt files(reads mapped) and Multiqc report for all the samples
-4. kraken_contamination: Kraken results(_kraken) and unclassified reads(_unclassified.txt). 
-5. kraken_report: prefix_Kraken_report_final.csv generated from kraken report and containing names of most abundant species(only the highest percentage) in each fastq files.
-6. coverage_depth: GATK depth_of_coverage statistics for each sample against the reference genome and combined report of coverage depth prefix_Final_Coverage_depth.txt.
+> 1. coverage: prefix_Final_Coverage.txt 
+> 2. quality: Fastqc and multiqc reports for each forward and reverse reads in a folder named prefix_Fastqc
+> 3. screen_contamination: Fastq screen .txt files(reads mapped) and Multiqc report for all the samples
+> 4. kraken_contamination: Kraken results(_kraken) and unclassified reads(_unclassified.txt). 
+> 5. kraken_report: prefix_Kraken_report_final.csv generated from kraken report and containing names of most abundant species(only the highest percentage) in each fastq files.
+> 6. coverage_depth: GATK depth_of_coverage statistics for each sample against the reference genome and combined report of coverage depth prefix_Final_Coverage_depth.txt.
 
