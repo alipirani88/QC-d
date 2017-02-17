@@ -29,7 +29,7 @@ def parser():
     required = parser.add_argument_group('Required arguments')
     optional = parser.add_argument_group('Optional arguments')
     required.add_argument('-samples', action='store', dest="samples", help='Filenames of forward-paired end reads. ***One per line***')
-    required.add_argument('-config', action='store', dest="config", help='Path to Config file')
+    optional.add_argument('-config', action='store', dest="config", help='Path to Config file')
     required.add_argument('-dir', action='store', dest="directory", help='Directory of Fastq Files')
     required.add_argument('-analysis', action='store', dest="analysis_names", help='COMMA-SEPERATED ANALYSIS_NAMES[coverage, quality, screen_contamination, kraken_contamination, kraken_report, coverage_depth]. Ex: -analysis coverage')
     required.add_argument('-o', action='store', dest="output_folder", help='Output Path ending with output directory name to save the results')
@@ -37,7 +37,7 @@ def parser():
     required.add_argument('-cluster', action='store', dest='cluster', help='Run Fastq_screen and Kraken on cluster/parallel-local/local. Make Sure to check if the [CLUSTER] section in config file is set up correctly.')
     required.add_argument('-genome_size', action='store', dest='size', help='Estimated Genome Size')
     required.add_argument('-prefix', action='store', dest='prefix', help='Prefix to use to save results files')
-    required.add_argument('-reference', action='store', dest='reference', help='Reference genome to use to map against for calculating the depth')
+    optional.add_argument('-reference', action='store', dest='reference', help='Reference genome to use to map against for calculating the depth')
     return parser
 
 """ Main Pipeline """
@@ -171,7 +171,7 @@ if __name__ == '__main__':
     if args.config:
         config_file = args.config
     else:
-        config_file = "./config"
+        config_file = os.path.abspath(__file__) + "/config"
     if args.output_folder != '':
         args.output_folder += '/'
         make_sure_path_exists(args.output_folder)
