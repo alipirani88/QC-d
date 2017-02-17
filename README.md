@@ -25,6 +25,15 @@
 
 <br>
 
+**Usage:**
+***
+
+```
+
+pipeline.py [-h] [-samples SAMPLES] [-config CONFIG] [-dir DIRECTORY] [-analysis ANALYSIS_NAMES] [-o OUTPUT_FOLDER] [-type TYPE] [-cluster CLUSTER] [-genome_size SIZE] [-prefix PREFIX] [-reference REFERENCE]
+
+```
+
 - **optional arguments:**
 
 
