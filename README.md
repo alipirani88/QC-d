@@ -22,7 +22,8 @@
 ```
   
   -h, --help            show this help message and exit
-
+  -config CONFIG        Path to Pipeline Config file
+  
 ```
 
 - **Required arguments:**
