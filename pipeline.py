@@ -34,7 +34,7 @@ def parser():
     required.add_argument('-analysis', action='store', dest="analysis_names", help='COMMA-SEPERATED ANALYSIS_NAMES[coverage, quality, screen_contamination, kraken_contamination, kraken_report, coverage_depth]. Ex: -analysis coverage')
     required.add_argument('-o', action='store', dest="output_folder", help='Output Path ending with output directory name to save the results')
     required.add_argument('-type', action='store', dest='type', help='Type of analysis: SE or PE')
-    required.add_argument('-cluster', action='store', dest='cluster', help='Run Fastq_screen and Kraken on cluster/parallel-local/local. Make Sure to check if the [CLUSTER] section in config file is set up correctly.')
+    optional.add_argument('-cluster', action='store', dest='cluster', help='Run Fastq_screen and Kraken on cluster/parallel-local/local. Make Sure to check if the [CLUSTER] section in config file is set up correctly.')
     required.add_argument('-genome_size', action='store', dest='size', help='Estimated Genome Size')
     required.add_argument('-prefix', action='store', dest='prefix', help='Prefix to use to save results files')
     optional.add_argument('-reference', action='store', dest='reference', help='Reference genome to use to map against for calculating the depth')
@@ -69,6 +69,10 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
     analysis_list = args.analysis_names.split(',')
     cp_cmd = "cp %s %s" % (args.samples, output_folder)
     os.system(cp_cmd)
+    if args.cluster:
+        cluster = args.cluster
+    else:
+        cluster = "local"
     for analysis in analysis_list:
         if analysis == "coverage":
             keep_logging("Calculating Coverage...\n", "Calculating Coverage", logger, 'info')
@@ -90,7 +94,7 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
             keep_logging("Screening Fastq reads against Reference Database...\n", "Screening Fastq reads against Reference Database...", logger, 'info')
             fastq_screen_directory = args.output_folder + "/%s_Fastqc_screen" % args.prefix
             make_sure_path_exists(fastq_screen_directory)
-            screen_contamination(filenames_array, Config, logger, output_folder, args.type, args.samples, fastq_screen_directory, args.cluster)
+            screen_contamination(filenames_array, Config, logger, output_folder, args.type, args.samples, fastq_screen_directory, cluster)
             Multiqc_reports_directory = args.output_folder + "/%s_Multiqc_reports" % args.prefix
             make_sure_path_exists(Multiqc_reports_directory)
             multiqc(fastq_screen_directory, "%s_Fastq_screen" % args.prefix, Config, logger, Multiqc_reports_directory)
@@ -98,17 +102,17 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
             keep_logging("Running Kraken on Input reads...\n", "Running Kraken on Input reads...", logger, 'info')
             kraken_directory = args.output_folder + "/%s_Kraken_results" % args.prefix
             make_sure_path_exists(kraken_directory)
-            kraken_contamination(filenames_array, Config, logger, output_folder, args.type, args.samples, kraken_directory, args.cluster)
+            kraken_contamination(filenames_array, Config, logger, output_folder, args.type, args.samples, kraken_directory, cluster)
         elif analysis == "kraken_report":
             keep_logging("Generating Kraken report on Kraken Results...\n", "Generating Kraken report on Kraken Results...", logger, 'info')
             kraken_directory = args.output_folder + "/%s_Kraken_results" % args.prefix
             make_sure_path_exists(kraken_directory)
-            kraken_report(filenames_array, Config, logger, output_folder, args.type, args.samples, kraken_directory, args.cluster)
+            kraken_report(filenames_array, Config, logger, output_folder, args.type, args.samples, kraken_directory, cluster)
         elif analysis == "coverage_depth":
             keep_logging("Running Coverage Depth analysis on Input reads...\n", "Running Coverage Depth analysis on Input reads...", logger, 'info')
             coverage_depth_directory = args.output_folder + "/%s_Coverage_depth" % args.prefix
             make_sure_path_exists(coverage_depth_directory)
-            coverage_depth_analysis(filenames_array, Config, logger, output_folder, args.type, args.samples, coverage_depth_directory, args.cluster, reference)
+            coverage_depth_analysis(filenames_array, Config, logger, output_folder, args.type, args.samples, coverage_depth_directory, cluster, reference)
 
 """ Check Subroutines """
 
@@ -171,7 +175,7 @@ if __name__ == '__main__':
     if args.config:
         config_file = args.config
     else:
-        config_file = os.path.abspath(__file__) + "/config"
+        config_file = os.path.dirname(os.path.abspath(__file__)) + "/config"
     if args.output_folder != '':
         args.output_folder += '/'
         make_sure_path_exists(args.output_folder)
