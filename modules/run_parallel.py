@@ -6,6 +6,7 @@ import argparse
 from joblib import Parallel, delayed
 import multiprocessing
 
+
 def run_parallel(parallel_local_cmds):
     complete = 0
     num_cores = multiprocessing.cpu_count()
@@ -17,6 +18,7 @@ def run_parallel(parallel_local_cmds):
 
 def run_command(i):
     os.system(i)
+    # keep_logging(i, i, logger, 'debug')
     done = "Running: %s\n" % i
     print done
     return done

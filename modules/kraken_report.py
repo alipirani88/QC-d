@@ -16,6 +16,7 @@ def kraken_report(filenames_array, Config, logger, output_folder, type, samples,
         file_prefix = kraken_directory + "/" + os.path.basename(file)[0:20]
         kraken_out = file_prefix + "_kraken"
         report_cmd = "%s/%s/kraken-report --db %s %s > %s_report.txt" % (ConfigSectionMap("bin_path", Config)['binbase'], ConfigSectionMap("kraken", Config)['kraken_bin'], ConfigSectionMap("kraken", Config)['db_path'], kraken_out, kraken_out)
+        keep_logging('', report_cmd, logger, 'debug')
         if cluster == "cluster":
             generate_cluster_jobs(report_cmd, file_prefix, Config, logger)
         elif cluster == "parallel-local":
@@ -26,8 +27,16 @@ def kraken_report(filenames_array, Config, logger, output_folder, type, samples,
         complete = run_parallel(kraken_report_array)
         prepare_report = "for i in %s/*_report.txt; do grep -w \'S\' $i | sort -k1n | tail -n1; done > %s/Kraken_report.txt\npaste %s %s/Kraken_report.txt > %s/Kraken_report_combined.txt\n" \
                              "awk -F\'\\t\' \'BEGIN{OFS=\",\"};{print $1, $2, $3, $7}\' %s/Kraken_report_combined.txt >> %s/Kraken_report_final.csv" % (kraken_directory, kraken_directory, samples, kraken_directory, kraken_directory, kraken_directory, kraken_directory)
-        print prepare_report
+
+        subprocess.call(["for i in %s/*_report.txt; do grep -w 'S' $i | sort -k1n | tail -n1; done > %s/Kraken_report.txt" % (kraken_directory, kraken_directory)], shell=True)
+        subprocess.call(["paste %s %s/Kraken_report.txt > %s/Kraken_report_combined.txt" % (samples, kraken_directory, kraken_directory)], shell=True)
+        subprocess.call(["awk -F'\t' 'BEGIN{OFS=\",\"};{print $1, $2, $3, $7}' %s/Kraken_report_combined.txt >> %s/Kraken_report_final.csv" % (kraken_directory, kraken_directory)], shell=True)
+
+        #print "Running:\n%s" % prepare_report
+        keep_logging('', prepare_report, logger, 'debug')
+
     prepare_report = "for i in %s/*_report.txt; do grep -w \'S\' $i | sort -k1n | tail -n1; done > %s/Kraken_report.txt\npaste %s %s/Kraken_report.txt > %s/Kraken_report_combined.txt\n" \
                              "awk -F\'\\t\' \'BEGIN{OFS=\",\"};{print $1, $2, $3, $7}\' %s/Kraken_report_combined.txt >> %s/Kraken_report_final.csv\n" \
                              "sed -i \'s/\\s//g\' %s/Kraken_report_final.csv" % (kraken_directory, kraken_directory, samples, kraken_directory, kraken_directory, kraken_directory, kraken_directory, kraken_directory)
-    print prepare_report
+    #print "Running:\n%s" % prepare_report
+    keep_logging('', prepare_report, logger, 'debug')

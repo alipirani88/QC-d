@@ -75,10 +75,10 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
         cluster = "local"
     for analysis in analysis_list:
         if analysis == "coverage":
-            keep_logging("Calculating Coverage...\n", "Calculating Coverage", logger, 'info')
+            keep_logging("Step: Calculating Coverage...\n", "Calculating Coverage", logger, 'info')
             coverage(filenames_array, Config, logger, output_folder, args.type, args.samples, args.size, prefix)
         elif analysis == "quality":
-            keep_logging("Analysing Fastqc Quality...\n", "Analysing Fastqc Quality...", logger, 'info')
+            keep_logging("Step: Analysing Fastqc Quality...\n", "Analysing Fastqc Quality...", logger, 'info')
             fastqc_main_directory = args.output_folder + "/%s_Fastqc" % args.prefix
             make_sure_path_exists(fastqc_main_directory)
             fastqc_forward_directory = fastqc_main_directory + "/%s_Forward" % args.prefix
@@ -91,7 +91,7 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
             multiqc(fastqc_forward_directory, "%s_Forward_fastqc" % args.prefix, Config, logger, Multiqc_reports_directory)
             multiqc(fastqc_reverse_directory, "%s_Reverse_fastqc" % args.prefix, Config, logger, Multiqc_reports_directory)
         elif analysis == "screen_contamination":
-            keep_logging("Screening Fastq reads against Reference Database...\n", "Screening Fastq reads against Reference Database...", logger, 'info')
+            keep_logging("Step: Screening Fastq reads against Reference Database...\n", "Screening Fastq reads against Reference Database...", logger, 'info')
             fastq_screen_directory = args.output_folder + "/%s_Fastqc_screen" % args.prefix
             make_sure_path_exists(fastq_screen_directory)
             screen_contamination(filenames_array, Config, logger, output_folder, args.type, args.samples, fastq_screen_directory, cluster)
@@ -99,17 +99,17 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
             make_sure_path_exists(Multiqc_reports_directory)
             multiqc(fastq_screen_directory, "%s_Fastq_screen" % args.prefix, Config, logger, Multiqc_reports_directory)
         elif analysis == "kraken_contamination":
-            keep_logging("Running Kraken on Input reads...\n", "Running Kraken on Input reads...", logger, 'info')
+            keep_logging("Step: Running Kraken on Input reads...\n", "Running Kraken on Input reads...", logger, 'info')
             kraken_directory = args.output_folder + "/%s_Kraken_results" % args.prefix
             make_sure_path_exists(kraken_directory)
             kraken_contamination(filenames_array, Config, logger, output_folder, args.type, args.samples, kraken_directory, cluster)
         elif analysis == "kraken_report":
-            keep_logging("Generating Kraken report on Kraken Results...\n", "Generating Kraken report on Kraken Results...", logger, 'info')
+            keep_logging("Step: Generating Kraken report on Kraken Results...\n", "Generating Kraken report on Kraken Results...", logger, 'info')
             kraken_directory = args.output_folder + "/%s_Kraken_results" % args.prefix
             make_sure_path_exists(kraken_directory)
             kraken_report(filenames_array, Config, logger, output_folder, args.type, args.samples, kraken_directory, cluster)
         elif analysis == "coverage_depth":
-            keep_logging("Running Coverage Depth analysis on Input reads...\n", "Running Coverage Depth analysis on Input reads...", logger, 'info')
+            keep_logging("Step: Running Coverage Depth analysis on Input reads...\n", "Running Coverage Depth analysis on Input reads...", logger, 'info')
             coverage_depth_directory = args.output_folder + "/%s_Coverage_depth" % args.prefix
             make_sure_path_exists(coverage_depth_directory)
             coverage_depth_analysis(filenames_array, Config, logger, output_folder, args.type, args.samples, coverage_depth_directory, cluster, reference)
@@ -125,9 +125,9 @@ def java_check():
     print "Checking Java Availability....\n"
     jd = subprocess.check_output(["java", "-version"], stderr=subprocess.STDOUT)
     if len(jd) < 1:
-        print "Unable to find a java runtime environment. The pipeline requires java 6 or later."
+        print "Unable to find a java runtime environment. The pipeline requires java 6 or later.\n"
     else:
-        print "Java Availability Check completed ...\n\n" + jd
+        print "Java Availability Check completed ...\n" + jd
 
 """ Make sure input raw reads files exists at given location. """
 def file_exists(path1, path2):
@@ -196,7 +196,7 @@ if __name__ == '__main__':
     else:
         reference = "NONE"
     pipeline(args, logger, Config, args.output_folder, args.prefix, reference)
-    keep_logging('End: Pipeline', 'End: Pipeline', logger, 'info')
+    keep_logging('End: Pipeline\n', 'End: Pipeline', logger, 'info')
     time_taken = datetime.now() - start_time_2
     keep_logging('Total Time taken: {}'.format(time_taken), 'Total Time taken: {}'.format(time_taken), logger, 'info')
 

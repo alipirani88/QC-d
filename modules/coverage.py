@@ -24,8 +24,8 @@ def coverage(filenames_array, Config, logger, output_folder, type, samples, size
                 coverage_cmd_reverse = "cat %s | %s" % (file.replace('_R1_', '_R2_'), ConfigSectionMap("coverage", Config)['awk_cmd'])
                 coverage_msg_forward = "Calculating coverage for file: %s\n" % file
                 coverage_msg_reverse = "Calculating coverage for file: %s\n" % file.replace('_R1_', '_R2_')
-            keep_logging(coverage_msg_forward, coverage_cmd_forward, logger, 'debug')
-            keep_logging(coverage_msg_reverse, coverage_cmd_reverse, logger, 'debug')
+            keep_logging('', coverage_cmd_forward, logger, 'debug')
+            keep_logging('', coverage_cmd_reverse, logger, 'debug')
             proc = subprocess.Popen([coverage_cmd_forward], stdout=subprocess.PIPE, shell=True)
             (out2, err2) = proc.communicate()
             f1.write(out2)
@@ -33,7 +33,7 @@ def coverage(filenames_array, Config, logger, output_folder, type, samples, size
             (out, err) = proc2.communicate()
             f2.write(out)
         temp_final_file = "%s/%s_temp_final.txt" % (output_folder, prefix)
-        sample_file = "%s/%s" % (output_folder, samples)
+        sample_file = "%s/%s" % (output_folder, os.path.basename(samples))
         with open(temp_final_file, 'w') as res, open(sample_file) as f1, open(temp_forward_coverage) as f2, open(temp_reverse_coverage) as f3:
             for line1, line2, line3 in zip(f1, f2, f3):
                 res.write("{}\t{}\t{}\n".format(line1.rstrip(), line2.rstrip(), line3.rstrip()))
@@ -59,12 +59,12 @@ def coverage(filenames_array, Config, logger, output_folder, type, samples, size
                 coverage_cmd_forward = "zcat %s | %s" % (file, ConfigSectionMap("coverage", Config)['awk_cmd'])
             else:
                 coverage_cmd_forward = "cat %s | %s" % (file, ConfigSectionMap("coverage", Config)['awk_cmd'])
-            keep_logging(coverage_msg_forward, coverage_cmd_forward, logger, 'debug')
+            keep_logging('', coverage_cmd_forward, logger, 'debug')
             proc = subprocess.Popen([coverage_cmd_forward], stdout=subprocess.PIPE, shell=True)
             (out2, err2) = proc.communicate()
             f1.write(out2)
         temp_final_file = "%s/%s_temp_final.txt" % (output_folder, prefix)
-        sample_file = "%s/%s" % (output_folder, samples)
+        sample_file = "%s/%s" % (output_folder, os.path.basename(samples))
         with open(temp_final_file, 'w') as res, open(sample_file) as f1, open(temp_forward_coverage) as f2:
             for line1, line2 in zip(f1, f2):
                 res.write("{}\t{}\n".format(line1.rstrip(), line2.rstrip()))
