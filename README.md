@@ -1,101 +1,73 @@
-# Coverage, Quality and Contamination Analysis Pipeline
+# QC'd - Quality control and Contamination Detection 
 
-***
-<br>
 
-#### <i>Analysis pipeline to calculate raw reads coverage, quality assessment, screening reads against reference genomes or minikraken database for determining contamination, generating kraken/krona report and calculating coverage depth by aligning reads against reference genome. 
+## Synopsis
+The pipeline calculates sequencing coverage and read depth, assess read quality and screen data against a reference database to detect contamination.
 
-#### It requires a file containing names of single/paired end fastq files and the type of analysis to be performed.</i>
-<br>
+## Input
 
-**The pipeline takes following analysis options:**
-***
-
-> **coverage:** calculates raw coverage for the given fastq samples.(need genome size; therefore its better to have a filename/samples with only one type of species)
-
-> **quality:** generates fastqc quality report of all the fastq files in the filename(It also generates a multiqc report of these fastqc results)
-
-> **screen_contamination:** runs fastq screen against the reference database(make sure you have checked the database path in fastq_screen config file as well as path to these config file has to be mentioned in the pipeline's config file)
-
-> **kraken_contamination:** Run Kraken(minikraken db only) to determine the most abundant species. Useful to determine contamination
-
-> **kraken_report:** Generate user-friendly Kraken report and krona plots from Kraken results
-
-> **coverage_depth:** Determine the depth of coverage(GATK) by mapping the reads against your choice of reference genome(check the path to reference genome in pipeline's config file)
-
-<br>
-
-**Usage:**
-***
+- Filenames of forward paired/single-end reads. One filename per line
+- Minikraken or custom pre-built Kraken database
+- Type of analysis to run. Options: coverage,quality,kraken_contamination,kraken_report,coverage_depth.
 
 ```
 
-pipeline.py [-h] [-samples SAMPLES] [-config CONFIG] [-dir DIRECTORY] [-analysis ANALYSIS_NAMES] [-o OUTPUT_FOLDER] [-type TYPE] [-cluster CLUSTER] [-genome_size SIZE] [-prefix PREFIX] [-reference REFERENCE]
+usage: pipeline.py [-h] [-samples SAMPLES] [-config CONFIG] [-dir DIRECTORY]
+                   [-analysis ANALYSIS_NAMES] [-o OUTPUT_FOLDER] [-type TYPE]
+                   [-cluster CLUSTER] [-genome_size SIZE] [-prefix PREFIX]
+                   [-reference REFERENCE]
 
-```
+QC'd - Quality control and Contamination Detection
 
-- **optional arguments:**
-
-
-```
-  
+optional arguments:
   -h, --help            show this help message and exit
-  -config CONFIG        Path to Pipeline Config file
-  -cluster CLUSTER      Run Fastq_screen and Kraken on cluster/parallel-
-                        local/local. Make Sure to check if the [CLUSTER]
-                        section settings in config file is set up properly.
-  
-```
-<br>
-- **Required arguments:**
 
-
-```
-
-  -samples SAMPLES      Filenames of forward-paired end reads. ***One per
-                        line***
-                        
-  -config CONFIG        Path to Config file
-  
-  -dir DIRECTORY        Directory of Fastq Files
-  
+Required arguments:
+  -samples SAMPLES      Filenames of forward-paired end or single-end reads. One filename per line
+  -dir DIRECTORY        Path to Sequencing Reads Data directory. NOTE: Provide full/absolute path.
   -analysis ANALYSIS_NAMES
-                        COMMA-SEPERATED ANALYSIS_NAMES[coverage, quality,
-                        screen_contamination, kraken_contamination,
-                        kraken_report, coverage_depth]. Ex: -analysis coverage or -analysis coverage, quality
-                        
-  -o OUTPUT_FOLDER      Output Path ending with output directory name to save
-                        the results
-                                   
+                        comma-seperated analysis names to run
+                        [Options: coverage,quality,kraken_contamination,kraken_report,coverage_depth].
+                         Example: -analysis coverage,quality
+  -o OUTPUT_FOLDER      Output Folder Path ending with output directory name to save the results.
+                        Creates a new output directory path if it doesn't exist.
+                        NOTE: Provide full/absolute path.
   -type TYPE            Type of analysis: SE or PE
-  
-  -cluster CLUSTER      Run Fastq_screen and Kraken on cluster/parallel-
-                        local/local. Make Sure to check if the [CLUSTER]
-                        section in config file is set up correctly.
-                        
   -genome_size SIZE     Estimated Genome Size
-  
   -prefix PREFIX        Prefix to use to save results files
-  
-  -reference REFERENCE  Reference genome for calculating coverage depth
-                        
 
+Optional arguments:
+  -config CONFIG        Path to Config file, Make sure to check config settings before running pipeline.
+                        Set Karken database path under [kraken] config section
+  -cluster CLUSTER      Run in one of the two modes. Default: local.
+                        The possible modes are: parallel-local/local
+                        parallel-local: Run jobs for each sample in parallel but on local system.
+  -reference REFERENCE  Reference genome to be uses for calculating GATK Depth of coverage.
 
 ```
-<br>
 
-**Note: Since Fastq screen and Kraken can be resource and time intensive, the pipeline can run individual jobs on cluster(supports PBS cluster only) or can also run multiple jobs on local multiple cores.**
-<br>
+**Analysis options:**
 
-#### Results:
 
-** The output folder will contain the following results depending on the analysis performed:**
-***
+> **coverage:** calculate raw sequencing coverage given a genome size; Assumes all filename/samples belong to one species type.
 
-> 1. coverage: prefix_Final_Coverage.txt 
-> 2. quality: Fastqc and multiqc reports for each forward and reverse reads in a folder named prefix_Fastqc
-> 3. screen_contamination: Fastq screen .txt files(reads mapped) and Multiqc report for all the samples
-> 4. kraken_contamination: Kraken results(_kraken) and unclassified reads(_unclassified.txt). 
-> 5. kraken_report: prefix_Kraken_report_final.csv generated from kraken report and containing names of most abundant species(only the highest percentage) in each fastq files.
-> 6. coverage_depth: GATK depth_of_coverage statistics for each sample against the reference genome and combined report of coverage depth prefix_Final_Coverage_depth.txt.
+> **quality:** run FastQC and generate quality reports. Also, merge multiple fastqc reports to generate MultiQC reports. 
+
+> **kraken_contamination:** Scan reads against a minikraken or pre-built custom kraken database to estimate species abundance.
+
+> **kraken_report:** Generate user-friendly Kraken and Krona html reports for visualization.
+
+> **coverage_depth:** calculate read depth using GATK DepthofCoverage tool. Requires a reference genome for read mapping.
+
+**Results:**
+
+> 1. coverage: tab-seperated prefix_Final_Coverage.txt report.
+
+> 2. quality: FastQC/MultiQC html reports will be generated under prefix_Fastqc
+
+> 3. kraken_contamination: Results generated by Kraken will be saved under prefix_kraken.  
+
+> 4. kraken_report: A summary report prefix_Kraken_report_final.csv will be generated using kraken results.
+
+> 5. coverage_depth: GATK depth_of_coverage statistics for each sample against the reference genome and a combined summary report prefix_Final_Coverage_depth.txt.
 

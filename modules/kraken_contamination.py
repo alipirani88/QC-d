@@ -18,6 +18,7 @@ def kraken_contamination(filenames_array, Config, logger, output_folder, type, s
             if file.endswith('.gz'):
                 #kraken_cmd = "%s/%s/%s --fastq-input --gzip-compressed --unclassified-out %s_unclassified.txt --db %s --output %s --paired %s %s" % (ConfigSectionMap("bin_path", Config)['binbase'], ConfigSectionMap("kraken", Config)['kraken_bin'], ConfigSectionMap("kraken", Config)['base_cmd'], file_prefix, ConfigSectionMap("kraken", Config)['db_path'], file_prefix, file, file.replace('_R1_', '_R2_'))
                 kraken_cmd = "%s/%s/%s --fastq-input --gzip-compressed --unclassified-out %s_unclassified.txt --db %s --output %s_kraken %s" % (ConfigSectionMap("bin_path", Config)['binbase'], ConfigSectionMap("kraken", Config)['kraken_bin'], ConfigSectionMap("kraken", Config)['base_cmd'], file_prefix, ConfigSectionMap("kraken", Config)['db_path'], file_prefix, file)
+                #kraken_cmd = ""
                 keep_logging('', kraken_cmd, logger, 'debug')
                 if cluster == "cluster":
                     cmd = cmd + "\n" + kraken_cmd
@@ -84,5 +85,14 @@ def kraken_contamination(filenames_array, Config, logger, output_folder, type, s
                     krona_cmd = krona_visualization(file_prefix, Config, logger, kraken_directory, cluster)
                     parallel_local_cmds_krona.append(krona_cmd)
     if cluster == "parallel-local":
-        complete = run_parallel(parallel_local_cmds)
-        complete = run_parallel(parallel_local_cmds_krona)
+        if len(parallel_local_cmds) > 1:
+            complete = run_parallel(parallel_local_cmds)
+        else:
+            call(kraken_cmd, logger)
+        if len(parallel_local_cmds_krona) > 1:
+            complete = run_parallel(parallel_local_cmds_krona)
+        else:
+            call(krona_cmd, logger)
+    elif cluster == "cluster":
+        print "No support for Kraken cluster jobs. Should be run in parallel-local or local mode.\n"
+        exit()

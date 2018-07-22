@@ -19,27 +19,25 @@ from modules.multiqc import *
 from modules.screen_contamination import *
 from modules.kraken_contamination import *
 from datetime import datetime
-from argparse import RawTextHelpFormatter
 from modules.coverage_depth import *
 from modules.kraken_report import *
 
 
 """ Command line argument parsing """
 def parser():
-    parser = argparse.ArgumentParser(description='QC\'d - Quality control and Contamination Detection', formatter_class=RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(description='Coverage, Quality and Contamination Analysis Pipeline')
     required = parser.add_argument_group('Required arguments')
     optional = parser.add_argument_group('Optional arguments')
-    required.add_argument('-samples', action='store', dest="samples", help='Filenames of forward-paired end or single-end reads. One filename per line')
-    optional.add_argument('-config', action='store', dest="config", help='Path to Config file, Make sure to check config settings before running pipeline.\nSet Karken database path under [kraken] config section')
-    required.add_argument('-dir', action='store', dest="directory", help='Path to Sequencing Reads Data directory. NOTE: Provide full/absolute path.')
-    required.add_argument('-analysis', action='store', dest="analysis_names", help='comma-seperated analysis names to run\n[Options: coverage,quality,kraken_contamination,kraken_report,coverage_depth].\n Example: -analysis coverage,quality')
-    required.add_argument('-o', action='store', dest="output_folder", help='Output Folder Path ending with output directory name to save the results.\nCreates a new output directory path if it doesn\'t exist.\nNOTE: Provide full/absolute path.')
+    required.add_argument('-samples', action='store', dest="samples", help='Filenames of forward-paired end reads. ***One per line***')
+    optional.add_argument('-config', action='store', dest="config", help='Path to Config file')
+    required.add_argument('-dir', action='store', dest="directory", help='Directory of Fastq Files')
+    required.add_argument('-analysis', action='store', dest="analysis_names", help='COMMA-SEPERATED ANALYSIS_NAMES[coverage,quality,screen_contamination,kraken_contamination,kraken_report,coverage_depth]. Ex: -analysis coverage')
+    required.add_argument('-o', action='store', dest="output_folder", help='Output Path ending with output directory name to save the results')
     required.add_argument('-type', action='store', dest='type', help='Type of analysis: SE or PE')
-    optional.add_argument('-cluster', action='store', dest='cluster', help='Run in one of the two modes. Default: local.\nThe possible modes are: parallel-local/local\n'
-                                                                           'parallel-local: Run jobs for each sample in parallel but on local system.')
+    optional.add_argument('-cluster', action='store', dest='cluster', help='Run Fastq_screen and Kraken on cluster/parallel-local/local. Make Sure to check if the [CLUSTER] section in config file is set up correctly.')
     required.add_argument('-genome_size', action='store', dest='size', help='Estimated Genome Size')
     required.add_argument('-prefix', action='store', dest='prefix', help='Prefix to use to save results files')
-    optional.add_argument('-reference', action='store', dest='reference', help='Reference genome to be uses for calculating GATK Depth of coverage.')
+    optional.add_argument('-reference', action='store', dest='reference', help='Reference genome to use to map against for calculating the depth')
     return parser
 
 """ Main Pipeline """
