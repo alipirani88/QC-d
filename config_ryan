@@ -20,7 +20,8 @@ aligner: bowtie2
 kraken_bin: /kraken-master/
 base_cmd: kraken
 updateTaxonomy: no
-db_path: /scratch/esnitkin_fluxod/rcrawfo/Kraken_db/2017_04_03_kraken_db/kraken_db_lite/
+db_path: /nfs/esnitkin/data_sharing/kraken_db_lite/
+#db_path: /scratch/esnitkin_fluxod/rcrawfo/Kraken_db/2017_04_03_kraken_db/kraken_db_lite/
 
 [krona]
 krona_bin: /KronaTools-2.7/bin/

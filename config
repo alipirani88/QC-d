@@ -28,7 +28,7 @@ base_cmd: ktImportTaxonomy
 updateTaxonomy: no
 
 [fastqc]
-fastqc_bin: /FastQC/
+fastqc_bin: /FastQC_v0.11.8/
 base_cmd: fastqc
 
 #Fix this: This path is hardcoded

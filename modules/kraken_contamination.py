@@ -26,8 +26,13 @@ def kraken_contamination(filenames_array, Config, logger, output_folder, type, s
                     cmd = cmd + "\n" + krona_cmd
                     generate_cluster_jobs(cmd, file_prefix, Config, logger)
                 elif cluster == "local":
-                    call(kraken_cmd, logger)
-                    krona_cmd = krona_visualization(file_prefix, Config, logger, kraken_directory, cluster)
+                    #call(kraken_cmd, logger)
+                    #keep_logging(kraken_cmd, kraken_cmd, logger, 'info')
+		    #keep_logging(kraken_cmd, kraken_cmd, logger, 'info')
+                    #krona_cmd = krona_visualization(file_prefix, Config, logger, kraken_directory, cluster)
+		    #keep_logging(krona_cmd, krona_cmd, logger, 'info')
+		    parallel_local_cmds.append(kraken_cmd)
+		    #parallel_local_cmds_krona.append(krona_cmd)
                 elif cluster == "parallel-local":
                     parallel_local_cmds.append(kraken_cmd)
                     krona_cmd = krona_visualization(file_prefix, Config, logger, kraken_directory, cluster)
@@ -42,7 +47,7 @@ def kraken_contamination(filenames_array, Config, logger, output_folder, type, s
                     cmd = cmd + "\n" + krona_cmd
                     generate_cluster_jobs(cmd, file_prefix, Config, logger)
                 elif cluster == "local":
-                    call(kraken_cmd, logger)
+                    #call(kraken_cmd, logger)
                     krona_cmd = krona_visualization(file_prefix, Config, logger, kraken_directory, cluster)
                 elif cluster == "parallel-local":
                     parallel_local_cmds.append(kraken_cmd)
@@ -96,3 +101,11 @@ def kraken_contamination(filenames_array, Config, logger, output_folder, type, s
     elif cluster == "cluster":
         print "No support for Kraken cluster jobs. Should be run in parallel-local or local mode.\n"
         exit()
+    elif cluster == "local":
+	#call(kraken_cmd, logger)
+        #keep_logging(kraken_cmd, kraken_cmd, logger, 'info')
+        #keep_logging(kraken_cmd, kraken_cmd, logger, 'info')
+        #krona_cmd = krona_visualization(file_prefix, Config, logger, kraken_directory, cluster)
+        #keep_logging(krona_cmd, krona_cmd, logger, 'info')	
+	for i in parallel_local_cmds:
+	    print i
