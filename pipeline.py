@@ -22,7 +22,7 @@ from datetime import datetime
 from argparse import RawTextHelpFormatter
 from modules.coverage_depth import *
 from modules.kraken_report import *
-
+from modules.mlst import mlst
 
 """ Command line argument parsing """
 def parser():
@@ -121,7 +121,7 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
             keep_logging("Step: Running MLST sequence typing on Input reads...\n", "Running MLST sequence typing on Input reads...", logger, 'info')
             mlst_directory = args.output_folder + "/%s_MLST_results" % args.prefix
             make_sure_path_exists(mlst_directory)
-            mlst(filenames_array, Config, logger, output_folder, args.type, args.samples, mlst_directory, cluster, reference)
+            mlst(filenames_array, Config, logger, mlst_directory, args.type, args.samples, mlst_directory, cluster, args.scheduler)
 
 """ Check Subroutines """
 
