@@ -20,7 +20,14 @@ aligner: bowtie2
 kraken_bin: /kraken-master/
 base_cmd: kraken
 updateTaxonomy: no
-db_path: /nfs/esnitkin/data_sharing/kraken_db_lite/
+db_path: /scratch/esnitkin_root/esnitkin/apirani/data_sharing/kraken_db_lite/
+#db_path: /scratch/esnitkin_fluxod/rcrawfo/Kraken_db/2017_04_03_kraken_db/kraken_db_lite/
+
+[kraken2]
+kraken_bin: /kraken2-2.0.8-beta/
+base_cmd: kraken2
+updateTaxonomy: no
+db_path: /nfs/esnitkin/bin_group/database/kraken2_minikraken/
 #db_path: /scratch/esnitkin_fluxod/rcrawfo/Kraken_db/2017_04_03_kraken_db/kraken_db_lite/
 
 [krona]
@@ -34,7 +41,7 @@ base_cmd: fastqc
 
 #Fix this: This path is hardcoded
 [multiqc]
-multiqc_bin: ~/anaconda/bin/
+multiqc_bin: 
 base_cmd: multiqc
 
 
@@ -68,7 +75,21 @@ gatk_filter2_parameter_expression = FQ < 0.025 && MQ > 50 && QUAL > 100 && DP > 
 #changed gatk_filter2_parameter_expression DP 15 from 10 that was used in VRE samples.
 
 
+[pbs]
+resources: nodes=1:ppn=4,pmem=4000mb,walltime=250:00:00
+large_resources: nodes=1:ppn=12,mem=47gb,walltime=250:00:00
+email: apirani@med.umich.edu
+queue: flux
+flux_account: esnitkin
+notification: a
 
+[slurm]
+resources: --nodes=1 --ntasks=1 --cpus-per-task=1 --mem=1g --time=25:00:00
+large_resources: --nodes=1 --ntasks-per-node=12 --mem=47000mb --time=250:00:00
+email: apirani@med.umich.edu
+partition: standard
+flux_account: esnitkin1
+notification: BEGIN,END,NONE,FAIL,REQUEUE
 
 
 

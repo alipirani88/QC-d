@@ -8,23 +8,23 @@ from modules.generate_cluster_jobs import *
 from modules.run_parallel import *
 
 
-def kraken_report(filenames_array, Config, logger, output_folder, type, samples, kraken_directory, cluster):
+def kraken_report(filenames_array, Config, logger, output_folder, type, samples, kraken_directory, cluster, scheduler):
     kraken_report_array = []
     echo = "echo \"Sample,Percentage of reads for Species,# of reads for Species, Species\" > %s/Kraken_report_final.csv" % (kraken_directory)
     os.system(echo)
-    for file in filenames_array:
-        file_prefix = kraken_directory + "/" + os.path.basename(file)[0:20]
-        kraken_out = file_prefix + "_kraken"
-        report_cmd = "%s/%s/kraken-report --db %s %s > %s_report.txt" % (ConfigSectionMap("bin_path", Config)['binbase'], ConfigSectionMap("kraken", Config)['kraken_bin'], ConfigSectionMap("kraken", Config)['db_path'], kraken_out, kraken_out)
-        keep_logging(report_cmd, report_cmd, logger, 'debug')
-        if cluster == "cluster":
-            generate_cluster_jobs(report_cmd, file_prefix, Config, logger)
-        elif cluster == "parallel-local":
-            kraken_report_array.append(report_cmd)
-        elif cluster == "local":
-            call(report_cmd)
+    # for file in filenames_array:
+    #     file_prefix = kraken_directory + "/" + os.path.basename(file)[0:20]
+    #     kraken_out = file_prefix + "_kraken"
+    #     report_cmd = "%s/%s/kraken-report --db %s %s > %s_report.txt" % (ConfigSectionMap("bin_path", Config)['binbase'], ConfigSectionMap("kraken", Config)['kraken_bin'], ConfigSectionMap("kraken", Config)['db_path'], kraken_out, kraken_out)
+    #     keep_logging(report_cmd, report_cmd, logger, 'debug')
+    #     if cluster == "cluster":
+    #         generate_cluster_jobs(report_cmd, file_prefix, scheduler, Config, logger)
+    #     elif cluster == "parallel-local":
+    #         kraken_report_array.append(report_cmd)
+    #     elif cluster == "local":
+    #         call(report_cmd, logger)
     if cluster == "parallel-local":
-        complete = run_parallel(kraken_report_array)
+        #complete = run_parallel(kraken_report_array)
         prepare_report = "for i in %s/*_report.txt; do grep -w \'S\' $i | sort -k1n | tail -n1; done > %s/Kraken_report_temp.txt\nls %s/*_report.txt > %s/filenames\npaste %s/filenames %s/Kraken_report_temp.txt > %s/Kraken_report_combined.txt\n" \
                              "awk -F\'\\t\' \'BEGIN{OFS=\",\"};{print $1, $2, $3, $7}\' %s/Kraken_report_combined.txt >> %s/Kraken_report_final.csv" % (kraken_directory, kraken_directory, kraken_directory, kraken_directory, kraken_directory, kraken_directory, kraken_directory, kraken_directory, kraken_directory)
 

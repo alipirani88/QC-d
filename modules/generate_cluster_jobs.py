@@ -5,23 +5,55 @@ from modules.log_modules import keep_logging
 from logging_subprocess import *
 from config_settings import ConfigSectionMap
 
-def generate_cluster_jobs(cmd, jobname, Config, logger):
-    job_filename = jobname + ".pbs"
-    job = os.path.basename(jobname)
-    #cluster_parameters = ConfigSectionMap("cluster", Config)['cluster_parameters']
-    #cluster_email = ConfigSectionMap("cluster", Config)['cluster_email']
-    cluster_resources = ConfigSectionMap("cluster", Config)['cluster_resources']
-    #cluster_account = ConfigSectionMap("cluster", Config)['cluster_account']
-    cluster_account = "#PBS -q fluxod\n#PBS -A esnitkin_fluxod\n#PBS -l qos=flux"
-    cluster_email = "#PBS -M apirani@med.umich.edu"
-    cluster_parameters = "#PBS -m abe\n#PBS -V"
-    job_message = "Generating PBS Scripts for Job: %s" % job
-    keep_logging(job_message, job_message, logger, 'info')
+
+
+def get_scheduler_directive(scheduler, Config):
+    """ Generate Cluster Directive lines for a scheduler provided with args.scheduler"""
+    # Scheduler Changes here; current changes
+    if scheduler and scheduler == "SLURM":
+        script_Directive = "#SBATCH"
+        job_name_flag = "--job-name="
+        scheduler_directives = "#SBATCH --mail-user=%s\n#SBATCH --mail-type=%s\n#SBATCH --export=ALL\n#SBATCH --partition=%s\n#SBATCH --account=%s\n#SBATCH %s\n" \
+                          % (ConfigSectionMap("slurm", Config)['email'],
+                             ConfigSectionMap("slurm", Config)['notification'],
+                             ConfigSectionMap("slurm", Config)['partition'],
+                             ConfigSectionMap("slurm", Config)['flux_account'],
+                             ConfigSectionMap("slurm", Config)['resources'])
+    elif scheduler and scheduler == "PBS":
+        script_Directive = "#PBS"
+        job_name_flag = "-N"
+        scheduler_directives = "#PBS -M %s\n#PBS -m %s\n#PBS -V\n#PBS -l %s\n#PBS -q %s\n#PBS -A %s\n#PBS -l qos=flux\n" \
+                          % (ConfigSectionMap("scheduler", Config)['email'],
+                             ConfigSectionMap("scheduler", Config)['notification'],
+                             ConfigSectionMap("scheduler", Config)['resources'],
+                             ConfigSectionMap("scheduler", Config)['queue'],
+                             ConfigSectionMap("scheduler", Config)['flux_account'])
+    else:
+        script_Directive = "#SBATCH"
+        job_name_flag = "--job-name="
+        scheduler_directives = "#SBATCH --mail-user=%s\n#SBATCH --mail-type=%s\n#SBATCH --export=ALL\n#SBATCH --partition=%s\n#SBATCH --account=%s\n#SBATCH %s\n" \
+                               % (ConfigSectionMap("slurm", Config)['email'],
+                                  ConfigSectionMap("slurm", Config)['notification'],
+                                  ConfigSectionMap("slurm", Config)['partition'],
+                                  ConfigSectionMap("slurm", Config)['flux_account'],
+                                  ConfigSectionMap("slurm", Config)['resources'])
+    return scheduler_directives, script_Directive, job_name_flag
+
+def generate_cluster_jobs(cmd, jobname, scheduler, Config, logger):
+    print "Generating Cluster jobs for %s\n" % jobname
+    scheduler_directives, script_Directive, job_name_flag = get_scheduler_directive(scheduler, Config)
+    if scheduler == "SLURM":
+        job_filename = jobname + ".sbat"
+    elif scheduler == "PBS":
+        job_filename = jobname + ".pbs"
+    else:
+        print "Provide Schedulre to generate cluster jobs"
+    print job_filename
     with open(job_filename, 'w') as out:
-        job_title = "#PBS -N %s" % job
-        out.write(job_title+'\n')
-        out.write(cluster_parameters+'\n')
-        out.write(cluster_email+'\n')
-        out.write(cluster_resources+'\n')
-        out.write(cluster_account+'\n')
-        out.write('\n'+cmd+'\n')
+        job_title = "%s %s%s" % (script_Directive, job_name_flag, jobname)
+        out.write("#!/bin/sh" + '\n')
+        out.write(script_Directive + " " + job_name_flag + os.path.basename(job_title) + '\n')
+        out.write(scheduler_directives + '\n')
+        out.write(cmd + '\n')
+
+

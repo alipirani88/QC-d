@@ -40,6 +40,10 @@ def parser():
     required.add_argument('-genome_size', action='store', dest='size', help='Estimated Genome Size')
     required.add_argument('-prefix', action='store', dest='prefix', help='Prefix to use to save result files')
     optional.add_argument('-reference', action='store', dest='reference', help='Reference genome to use for calculating GATK Depth of coverage.')
+    optional.add_argument('-downsample', action='store', dest="downsample",
+                          help='yes/no: Downsample Reads data to default depth of 100X')
+    optional.add_argument('-scheduler', action='store', dest="scheduler",
+                          help='Type of Scheduler for generating cluster jobs: PBS, SLURM, LOCAL')
     return parser
 
 """ Main Pipeline """
@@ -53,17 +57,14 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
     with open(args.samples) as fp:
         for line in fp:
             line = line.strip()
-            #reverse_raw = line.replace("_R1_", "_R2_")
-            reverse_raw = line.replace("_1_sequence", "_2_sequence")
             line = args.directory + "/" + line
             filenames_array.append(line)
             if args.type != "PE":
                 reverse_raw = "None"
-                #forward_raw = args.directory + "/" args
                 file_exists(line, reverse_raw)
             else:
-                reverse_raw = args.directory + "/" + reverse_raw
-                file_exists(line, reverse_raw)
+                #reverse_raw = args.directory + "/" + reverse_raw
+                file_exists(line, line)
 
     """ Check java availability """
     java_check()
@@ -105,17 +106,22 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
             keep_logging("Step: Running Kraken on Input reads...\n", "Running Kraken on Input reads...", logger, 'info')
             kraken_directory = args.output_folder + "/%s_Kraken_results" % args.prefix
             make_sure_path_exists(kraken_directory)
-            kraken_contamination(filenames_array, Config, logger, output_folder, args.type, args.samples, kraken_directory, cluster)
+            kraken_contamination(filenames_array, Config, logger, output_folder, args.type, args.samples, kraken_directory, cluster, args.downsample, args.scheduler)
         elif analysis == "kraken_report":
             keep_logging("Step: Generating Kraken report on Kraken Results...\n", "Generating Kraken report on Kraken Results...", logger, 'info')
             kraken_directory = args.output_folder + "/%s_Kraken_results" % args.prefix
             make_sure_path_exists(kraken_directory)
-            kraken_report(filenames_array, Config, logger, output_folder, args.type, args.samples, kraken_directory, cluster)
+            kraken_report(filenames_array, Config, logger, output_folder, args.type, args.samples, kraken_directory, cluster, args.scheduler)
         elif analysis == "coverage_depth":
             keep_logging("Step: Running Coverage Depth analysis on Input reads...\n", "Running Coverage Depth analysis on Input reads...", logger, 'info')
             coverage_depth_directory = args.output_folder + "/%s_Coverage_depth" % args.prefix
             make_sure_path_exists(coverage_depth_directory)
             coverage_depth_analysis(filenames_array, Config, logger, output_folder, args.type, args.samples, coverage_depth_directory, cluster, reference)
+        elif analysis == "mlst":
+            keep_logging("Step: Running MLST sequence typing on Input reads...\n", "Running MLST sequence typing on Input reads...", logger, 'info')
+            mlst_directory = args.output_folder + "/%s_MLST_results" % args.prefix
+            make_sure_path_exists(mlst_directory)
+            mlst(filenames_array, Config, logger, output_folder, args.type, args.samples, mlst_directory, cluster, reference)
 
 """ Check Subroutines """
 
