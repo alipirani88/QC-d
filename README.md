@@ -2,13 +2,21 @@
 
 
 ## Synopsis
-The pipeline calculates sequencing coverage and read depth, assess read quality and screen data against a reference database to detect contamination.
+
+Run various QC steps on the raw sequencing data. 
+
+1. Calculate raw sequencing coverage.
+2. Run fastQC and generate a multiQC report to assess the quality of samples.
+3. Screen samples against a Kraken database and detect if the data contains the expected target species.
+4. Calculate read depth from BWA mapped alignments.
+5. Run ARIBA MLST typing and type the samples.
+6. Detect presence of antibiotic resistance genes using ARIBA CARD.
 
 ## Input
 
 - A file containing filenames of forward paired/single-end reads. One filename per line.
-- Minikraken or custom pre-built Kraken database.
-- Type of analysis to run. Options: coverage,quality,kraken_contamination,kraken_report,coverage_depth.
+- Path to Minikraken or custom pre-built Kraken database.
+- Type of analysis to run. Options: coverage,quality,kraken_contamination,kraken_report,coverage_depth,mlst.
 
 ## Analysis options:
 
@@ -22,6 +30,10 @@ The pipeline calculates sequencing coverage and read depth, assess read quality 
 **kraken_report:** Generate user-friendly Kraken and Krona html reports for visualization.
 
 **coverage_depth:** calculate read depth using GATK DepthofCoverage tool. Requires a reference genome for read mapping.
+
+**mlst:** characterize samples with ARIBA MLST typing
+
+**amr:** detect antibiotic resistance genes using ARIBA and CARD database.
 
 
 ```
