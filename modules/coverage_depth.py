@@ -12,11 +12,12 @@ from modules.samtools import *
 from modules.gatk import *
 
 
-def coverage_depth_analysis(filenames_array, Config, logger, output_folder, type, samples, coverage_depth_directory, cluster, reference):
+def coverage_depth_analysis(filenames_array, Config, logger, output_folder, type, samples, coverage_depth_directory, cluster, reference, scheduler):
     files_to_delete = []
-    command_list = []
+    #command_list = []
     if type == "PE":
         for file in filenames_array:
+            command_list = []
             filename_base = os.path.basename(file)
             if "R1_001_final.fastq.gz" in filename_base:
                 reverse_file = file.replace("R1_001_final.fastq.gz", "R2_001_final.fastq.gz")
@@ -56,25 +57,24 @@ def coverage_depth_analysis(filenames_array, Config, logger, output_folder, type
             if file.endswith('.gz'):
                 keep_logging("Generating command list to create cluster jobs", "Generating command list to create cluster jobs", logger, 'info')
                 split_field = prepare_readgroup(file, logger)
-                command_list, files_to_delete = align_bwa(ConfigSectionMap("bin_path", Config)['binbase'] + ConfigSectionMap("bwa", Config)['bwa_bin'] + ConfigSectionMap("bwa", Config)['base_cmd'],file, reverse_file, coverage_depth_directory, reference, split_field, first_part, files_to_delete, logger, Config, type, command_list)
-                out_sam = files_to_delete[0]
-                command_list, files_to_delete = samtobam(out_sam, coverage_depth_directory, analysis, files_to_delete, logger, Config, command_list)
-                out_bam = files_to_delete[1]
-                command_list, files_to_delete = sort_bam(out_bam, coverage_depth_directory, analysis, logger, Config, command_list, files_to_delete)
-                out_sort_bam = files_to_delete[2]
+                command_list, files_to_delete, out_sam = align_bwa(ConfigSectionMap("bwa", Config)['base_cmd'],file, reverse_file, coverage_depth_directory, reference, split_field, first_part, files_to_delete, logger, Config, type, command_list)
+                # out_sam = files_to_delete[0]
+                command_list, files_to_delete, out_bam = samtobam(out_sam, coverage_depth_directory, analysis, files_to_delete, logger, Config, command_list)
+                # out_bam = files_to_delete[1]
+                command_list, files_to_delete, out_sort_bam = sort_bam(out_bam, coverage_depth_directory, analysis, logger, Config, command_list, files_to_delete)
+                # out_sort_bam = files_to_delete[2]
                 command_list = index_bam(out_sort_bam, coverage_depth_directory, logger, Config, command_list, files_to_delete)
                 command_list, gatk_depth_of_coverage_file = gatk_DepthOfCoverage(out_sort_bam, coverage_depth_directory, analysis, reference, logger, Config, command_list)
-                command_list = flagstat(out_sort_bam, output_folder, analysis, logger, Config, command_list)
+                command_list = flagstat(out_sort_bam, coverage_depth_directory, analysis, logger, Config, command_list)
                 coverage_depth_cmd = ""
 
                 for i in command_list:
                     coverage_depth_cmd = coverage_depth_cmd + i + "\n"
-                keep_logging("The coverage Depth commands for file %s are:\n", "The coverage Depth commands for file %s are:\n", logger, 'info')
-                keep_logging(coverage_depth_cmd, coverage_depth_cmd, logger, 'debug')
+                keep_logging('', coverage_depth_cmd, logger, 'debug')
 
 
                 if cluster == "cluster":
-                    generate_cluster_jobs(coverage_depth_cmd, file_prefix, Config, logger)
+                    generate_cluster_jobs(coverage_depth_cmd, file_prefix, scheduler, Config, logger)
                 else:
                     f3=open(file_prefix + '_commands.sh', 'w+')
                     f3.write(coverage_depth_cmd)
@@ -82,24 +82,23 @@ def coverage_depth_analysis(filenames_array, Config, logger, output_folder, type
             else:
                 keep_logging("Generating command list to create cluster jobs", "Generating command list to create cluster jobs", logger, 'info')
                 split_field = prepare_readgroup(file, logger)
-                command_list, files_to_delete = align_bwa(ConfigSectionMap("bin_path", Config)['binbase'] + ConfigSectionMap("bwa", Config)['bwa_bin'],file, reverse_file, coverage_depth_directory, reference, split_field, first_part, files_to_delete, logger, Config, type, command_list)
-                out_sam = files_to_delete[0]
+                command_list, files_to_delete = align_bwa(ConfigSectionMap("bwa", Config)['base_cmd'],file, reverse_file, coverage_depth_directory, reference, split_field, first_part, files_to_delete, logger, Config, type, command_list)
+                #out_sam = files_to_delete[0]
                 command_list, files_to_delete = samtobam(out_sam, coverage_depth_directory, analysis, files_to_delete, logger, Config, command_list, files_to_delete)
-                out_bam = files_to_delete[1]
+                #out_bam = files_to_delete[1]
                 command_list, files_to_delete = sort_bam(out_bam, coverage_depth_directory, analysis, logger, Config, command_list, files_to_delete)
-                out_sort_bam = files_to_delete[2]
+                #out_sort_bam = files_to_delete[2]
                 command_list = index_bam(out_sort_bam, coverage_depth_directory, logger, Config, command_list, files_to_delete)
                 command_list, gatk_depth_of_coverage_file = gatk_DepthOfCoverage(out_sorted_bam, coverage_depth_directory, analysis, reference, logger, Config, command_list)
                 command_list = flagstat(out_sort_bam, coverage_depth_directory, analysis, logger, Config, command_list)
                 coverage_depth_cmd = ""
                 for i in command_list:
                     coverage_depth_cmd = coverage_depth_cmd + i + "\n"
-                keep_logging("The coverage Depth commands for file %s are:\n", "The coverage Depth commands for file %s are:\n", logger, 'info')
-                keep_logging(coverage_depth_cmd, coverage_depth_cmd, logger, 'debug')
+                keep_logging('', coverage_depth_cmd, logger, 'debug')
 
 
                 if cluster == "cluster":
-                    generate_cluster_jobs(coverage_depth_cmd, file_prefix, Config, logger)
+                    generate_cluster_jobs(coverage_depth_cmd, file_prefix, scheduler, Config, logger)
                 else:
                     f3=open(file_prefix + '_commands.sh', 'w+')
                     f3.write(coverage_depth_cmd)
@@ -145,7 +144,7 @@ def coverage_depth_analysis(filenames_array, Config, logger, output_folder, type
             if file.endswith('.gz'):
                 keep_logging("Generating command list to create cluster jobs", "Generating command list to create cluster jobs", logger, 'info')
                 split_field = prepare_readgroup(file, logger)
-                command_list, files_to_delete = align_bwa(ConfigSectionMap("bin_path", Config)['binbase'] + ConfigSectionMap("bwa", Config)['bwa_bin'],file, reverse_file, coverage_depth_directory, reference, split_field, first_part, files_to_delete, logger, Config, type, command_list)
+                command_list, files_to_delete = align_bwa(ConfigSectionMap("bwa", Config)['bwa_bin'],file, reverse_file, coverage_depth_directory, reference, split_field, first_part, files_to_delete, logger, Config, type, command_list)
                 out_sam = files_to_delete[0]
                 command_list, files_to_delete = samtobam(out_sam, coverage_depth_directory, analysis, files_to_delete, logger, Config, command_list, files_to_delete)
                 out_bam = files_to_delete[1]

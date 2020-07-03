@@ -2,13 +2,19 @@
 
 
 ## Synopsis
-The pipeline calculates sequencing coverage and read depth, assess read quality and screen data against a reference database to detect contamination.
+ 
+- Calculate Raw sequencing coverage from Fastq reads, 
+- assess read quality and generate aggregated multiqc report from FastQC results, 
+- Downsamples and screen downsampled data for possible contamination using Kraken,
+- Estimate coverage depth from mapped read alignments,
+- Estimate MLST using Ariba,
 
 ## Input
 
-- A file containing filenames of forward paired/single-end reads. One filename per line.
-- Minikraken or custom pre-built Kraken database.
-- Type of analysis to run. Options: coverage,quality,kraken_contamination,kraken_report,coverage_depth.
+- A file containing sample names of forward paired/single-end reads. One sample per line.
+- Set path to Minikraken or custom pre-built Kraken database in config file.
+- Set Ariba MLST database path in config file.
+- Type of analysis to run. Options: coverage,quality,kraken_contamination,kraken_report,coverage_depth,mlst
 
 ## Analysis options:
 
@@ -17,11 +23,13 @@ The pipeline calculates sequencing coverage and read depth, assess read quality 
 
 **quality:** run FastQC and generate quality reports. Also, merge multiple fastqc reports to generate MultiQC reports. 
 
-**kraken_contamination:** Scan reads against a minikraken or pre-built custom kraken database to estimate species abundance.
+**kraken_contamination:** Scan reads against a minikraken or pre-built custom Kraken database to estimate species abundance.
 
 **kraken_report:** Generate user-friendly Kraken and Krona html reports for visualization.
 
 **coverage_depth:** calculate read depth using GATK DepthofCoverage tool. Requires a reference genome for read mapping.
+
+**mlst:** estimates ST by screening against MLST database using Ariba
 
 
 ```

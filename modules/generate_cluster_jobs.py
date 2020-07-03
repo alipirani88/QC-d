@@ -47,8 +47,8 @@ def generate_cluster_jobs(cmd, jobname, scheduler, Config, logger):
     elif scheduler == "PBS":
         job_filename = jobname + ".pbs"
     else:
-        print "Provide Schedulre to generate cluster jobs"
-    print job_filename
+        print "Provide Scheduler to generate cluster jobs"
+        exit()
     with open(job_filename, 'w') as out:
         job_title = "%s %s%s" % (script_Directive, job_name_flag, jobname)
         out.write("#!/bin/sh" + '\n')
@@ -56,4 +56,4 @@ def generate_cluster_jobs(cmd, jobname, scheduler, Config, logger):
         out.write(scheduler_directives + '\n')
         out.write(cmd + '\n')
 
-
+    return job_filename

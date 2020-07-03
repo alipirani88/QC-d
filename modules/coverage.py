@@ -15,15 +15,19 @@ def coverage(filenames_array, Config, logger, output_folder, type, samples, size
     if type == "PE":
         for file in filenames_array:
             if file.endswith('.gz'):
+                coverage_msg_forward = "Calculating coverage for file: %s\n" % file
+                coverage_msg_reverse = "Calculating coverage for file: %s\n" % file.replace('_R1_', '_R2_')
+                keep_logging('', coverage_msg_forward, logger, 'debug')
+                keep_logging('', coverage_msg_reverse, logger, 'debug')
                 coverage_cmd_forward = "zcat %s | %s" % (file, ConfigSectionMap("coverage", Config)['awk_cmd'])
                 coverage_cmd_reverse = "zcat %s | %s" % (file.replace('_R1_', '_R2_'), ConfigSectionMap("coverage", Config)['awk_cmd'])
+            else:
                 coverage_msg_forward = "Calculating coverage for file: %s\n" % file
                 coverage_msg_reverse = "Calculating coverage for file: %s\n" % file.replace('_R1_', '_R2_')
-            else:
+                keep_logging('', coverage_msg_forward, logger, 'debug')
+                keep_logging('', coverage_msg_reverse, logger, 'debug')
                 coverage_cmd_forward = "cat %s | %s" % (file, ConfigSectionMap("coverage", Config)['awk_cmd'])
                 coverage_cmd_reverse = "cat %s | %s" % (file.replace('_R1_', '_R2_'), ConfigSectionMap("coverage", Config)['awk_cmd'])
-                coverage_msg_forward = "Calculating coverage for file: %s\n" % file
-                coverage_msg_reverse = "Calculating coverage for file: %s\n" % file.replace('_R1_', '_R2_')
             keep_logging('', coverage_cmd_forward, logger, 'debug')
             keep_logging('', coverage_cmd_reverse, logger, 'debug')
             proc = subprocess.Popen([coverage_cmd_forward], stdout=subprocess.PIPE, shell=True)
@@ -56,8 +60,12 @@ def coverage(filenames_array, Config, logger, output_folder, type, samples, size
         for file in filenames_array:
             coverage_msg_forward = "Calculating coverage for file: %s\n" % file
             if file.endswith('.gz'):
+                coverage_msg_forward = "Calculating coverage for file: %s\n" % file
+                keep_logging('', coverage_msg_forward, logger, 'debug')
                 coverage_cmd_forward = "zcat %s | %s" % (file, ConfigSectionMap("coverage", Config)['awk_cmd'])
             else:
+                coverage_msg_forward = "Calculating coverage for file: %s\n" % file
+                keep_logging('', coverage_msg_forward, logger, 'debug')
                 coverage_cmd_forward = "cat %s | %s" % (file, ConfigSectionMap("coverage", Config)['awk_cmd'])
             keep_logging('', coverage_cmd_forward, logger, 'debug')
             proc = subprocess.Popen([coverage_cmd_forward], stdout=subprocess.PIPE, shell=True)
@@ -82,3 +90,6 @@ def coverage(filenames_array, Config, logger, output_folder, type, samples, size
                 print_string = line + "\t" + str(final_coverage) + "\n"
                 f3.write(print_string)
         f3.close()
+
+    os.system("rm %s %s %s" % (temp_forward_coverage, temp_reverse_coverage, temp_final_file))
+    keep_logging('Coverage Report - %s\n' % final_coverage_file, 'Coverage Report - %s\n' % final_coverage_file, logger, 'info')

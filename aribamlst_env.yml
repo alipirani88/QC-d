@@ -1,0 +1,7 @@
+name: ariba_sanger
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+prefix: /home/apirani/.conda/envs/ariba_sanger
+
