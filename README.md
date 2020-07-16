@@ -36,33 +36,41 @@
 usage: qc.py [-h] [-samples SAMPLES] [-config CONFIG] [-dir DIRECTORY]
              [-analysis ANALYSIS_NAMES] [-o OUTPUT_FOLDER] [-type TYPE]
              [-cluster CLUSTER] [-genome_size SIZE] [-prefix PREFIX]
-             [-reference REFERENCE]
+             [-reference REFERENCE] [-downsample DOWNSAMPLE]
+             [-scheduler SCHEDULER] [-dryrun] [-mlst_db MLST_DB]
 
-QC'd - Quality control and Contamination Detection
+QC'd - Quality control and Contamination Detection Workflow
 
 optional arguments:
   -h, --help            show this help message and exit
 
 Required arguments:
-  -samples SAMPLES      A file containing filenames of forward-paired end or single-end reads. One filename per line
-  -dir DIRECTORY        Absolute/full path to Sequencing Reads Data directory.
+  -samples SAMPLES      A file containing filenames of forward-paired end or single-end reads. One Sample per line
+  -dir DIRECTORY        Path to Sequencing Reads Data directory. NOTE: Provide full/absolute path.
   -analysis ANALYSIS_NAMES
                         comma-seperated analysis names to run
-                        [Options: coverage,quality,kraken_contamination,kraken_report,coverage_depth,mlst,summary].
-                        Example: -analysis coverage,quality
+                        [Options: coverage,quality,kraken_contamination,kraken_report,coverage_depth].
+                        Example: "-analysis coverage,quality" - This will estimate coverage and quality for the samples given in -samples
   -o OUTPUT_FOLDER      Output Folder Path ending with output directory name to save the results.
                         Creates a new output directory path if it doesn't exist.
   -type TYPE            Type of analysis: SE or PE
-  -genome_size SIZE     Estimated Genome Size
-  -prefix PREFIX        Prefix to use to save result files
+  -genome_size SIZE     Estimated Genome Size - to be used for estimating coverage in downsampling steps
+  -prefix PREFIX        Use this prefix to save the results files
 
 Optional arguments:
   -config CONFIG        Path to Config file, Make sure to check config settings before running pipeline.
-                        Set Kraken database path under [kraken] config section
-  -cluster CLUSTER      Run in one of the two modes. Default: local.
-                        Modes: parallel-local/local
-                        parallel-local: Run jobs for each sample in parallel but on local system.
+                        Note: Set Kraken database path under [kraken] config section
+  -cluster CLUSTER      Run in one of the two modes. 
+                        Default is local for coverage and fastqc analysis.
+                        For all the other analysis Default is cluster. The pipeline prefers cluster mode to generate SLURM/PBS jobs.
+                        Modes: local or cluster
   -reference REFERENCE  Reference genome to use for calculating GATK Depth of coverage.
+  -downsample DOWNSAMPLE
+                        yes/no: Downsample Reads data to default depth of 100X
+  -scheduler SCHEDULER  
+                        Type of Scheduler for generating Kraken cluster jobs: PBS, SLURM, LOCAL
+  -dryrun               Perform a trial run without submitting cluster jobs
+  -mlst_db MLST_DB      Ariba MLST database path
 
 ```
 
@@ -113,7 +121,7 @@ Run QC'd pipeline on samples in test_readsdir.
 
 ```
 
-python QC-d/pipeline.py \
+python QC-d/qc.py \
 -samples filenames \
 -dir /Path-To-Your/test_readsdir/ \
 -analysis coverage,quality,kraken_contamination,coverage_depth,mlst \
@@ -126,10 +134,11 @@ python QC-d/pipeline.py \
 -scheduler SLURM \
 -downsample yes \
 -reference KPNIH1
+-dryrun
 
 ```
 
-The above command will calculate the raw coverage and fastq statistics, generate fastqc report, gather fastqc reports to generate a multiqc report. It will however not run kraken/gatk/ariba but instead generate slurm jobs for each analysis that the user can submit later.
+The above command will calculate the raw coverage and fastq statistics, generate fastqc report, gather fastqc reports to generate a multiqc report. It will however not run kraken/gatk/ariba but instead generate slurm jobs for each analysis without submitting it to cluster. User can submit the later after verifying that all the SLURM/PBS arguments are set properly.
 
 The kraken jobs will be generated in prefix_Kraken_results folder. The jobs will downsample the fastqc reads if they are greater than 100X, scans downsampled reads against Kraken database(path should be provided in config file) and generate a kraken report.
 
@@ -142,7 +151,7 @@ Once all the analysis jobs are completed, run the summary analysis to generate a
 
 ```
 
-python QC-d/pipeline.py \
+python QC-d/qc.py \
 -samples filenames \
 -dir /Path-To-Your/test_readsdir/ \
 -analysis summary \
@@ -155,5 +164,6 @@ python QC-d/pipeline.py \
 -scheduler SLURM \
 -downsample yes \
 -reference KPNIH1
+-dryrun
 
 ```

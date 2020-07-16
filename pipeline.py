@@ -30,23 +30,23 @@ def parser():
     required = parser.add_argument_group('Required arguments')
     optional = parser.add_argument_group('Optional arguments')
     required.add_argument('-samples', action='store', dest="samples", help='A file containing filenames of forward-paired end or single-end reads. One Sample per line')
-    optional.add_argument('-config', action='store', dest="config", help='Path to Config file, Make sure to check config settings before running pipeline.\n Note: Set Kraken database path under [kraken] config section')
+    optional.add_argument('-config', action='store', dest="config", help='Path to Config file, Make sure to check config settings before running pipeline.\nNote: Set Kraken database path under [kraken] config section')
     required.add_argument('-dir', action='store', dest="directory", help='Path to Sequencing Reads Data directory. NOTE: Provide full/absolute path.')
     required.add_argument('-analysis', action='store', dest="analysis_names", help='comma-seperated analysis names to run\n[Options: coverage,quality,kraken_contamination,kraken_report,coverage_depth].\nExample: "-analysis coverage,quality" - This will estimate coverage and quality for the samples given in -samples')
     required.add_argument('-o', action='store', dest="output_folder", help='Output Folder Path ending with output directory name to save the results.\nCreates a new output directory path if it doesn\'t exist.')
     required.add_argument('-type', action='store', dest='type', help='Type of analysis: SE or PE')
-    optional.add_argument('-cluster', action='store', dest='cluster', help='Run in one of the two modes. Default: local.\nModes: local or cluster')
+    optional.add_argument('-cluster', action='store', dest='cluster', help='Run in one of the two modes. \nDefault is local for coverage and fastqc analysis.\nFor all the other analysis Default is cluster. The pipeline prefers cluster mode to generate SLURM/PBS jobs.\nModes: local or cluster')
     required.add_argument('-genome_size', action='store', dest='size', help='Estimated Genome Size - to be used for estimating coverage in downsampling steps')
     required.add_argument('-prefix', action='store', dest='prefix', help='Use this prefix to save the results files')
     optional.add_argument('-reference', action='store', dest='reference', help='Reference genome to use for calculating GATK Depth of coverage.')
     optional.add_argument('-downsample', action='store', dest="downsample",
                           help='yes/no: Downsample Reads data to default depth of 100X')
     optional.add_argument('-scheduler', action='store', dest="scheduler",
-                          help='Type of Scheduler for generating Kraken cluster jobs: PBS, SLURM, LOCAL')
-    optional.add_argument('-dryrun', '--dryrun', action='store_true', dest="dryrun",
+                          help='\nType of Scheduler for generating Kraken cluster jobs: PBS, SLURM, LOCAL')
+    optional.add_argument('-dryrun', action='store_true', dest="dryrun",
                           help='Perform a trial run without submitting cluster jobs',
                           required=False)
-    optional.add_argument('-mlst_db', '--mlst_db', action='store', dest="mlst_db",
+    optional.add_argument('-mlst_db', action='store', dest="mlst_db",
                           help='Ariba MLST database path',
                           required=False)
     return parser

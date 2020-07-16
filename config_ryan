@@ -96,7 +96,8 @@ ariba_bin:
 base_cmd: ariba
 mlst_db_path: /nfs/esnitkin/bin_group/database/ariba/MLST_db/Clostridium_difficile/ref_db/
 
-
+#mlst_db_path: /nfs/esnitkin/bin_group/database/ariba/MLST_db/Klebsiella_pneumoniae/ref_db/
+#mlst_db_path: /nfs/esnitkin/bin_group/database/ariba/MLST_db/Clostridium_difficile/ref_db/
 ###############
 ########################################################################################################################
 
