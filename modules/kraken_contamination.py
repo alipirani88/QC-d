@@ -106,7 +106,8 @@ def kraken_contamination(filenames_array, Config, logger, output_folder, type, s
     cmd = ""
 
     for file in filenames_array:
-        file_prefix = kraken_directory + "/" + os.path.basename(file)[0:20]
+        #file_prefix = kraken_directory + "/" + os.path.basename(file)[0:20]
+	file_prefix = kraken_directory + "/" + os.path.basename(file.replace('_R1.*fastq.gz',''))
         file2 = file.replace('_R1_', '_R2_')
 
         read1, read2, seqtk_downsample = downsample_reads(file, file2, genome_size, logger)

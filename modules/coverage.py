@@ -13,6 +13,8 @@ def coverage(filenames_array, Config, logger, output_folder, type, samples, size
     f1=open(temp_forward_coverage, 'w+')
     f2=open(temp_reverse_coverage, 'w+')
     if type == "PE":
+        raw_coverage_file = "%s/%s_raw_Coverage.txt" % (output_folder, prefix)
+        f4 = open(raw_coverage_file, 'w+')
         for file in filenames_array:
             if file.endswith('.gz'):
                 coverage_msg_forward = "Calculating coverage for file: %s\n" % file
@@ -36,6 +38,12 @@ def coverage(filenames_array, Config, logger, output_folder, type, samples, size
             proc2 = subprocess.Popen([coverage_cmd_reverse], stdout=subprocess.PIPE, shell=True)
             (out, err) = proc2.communicate()
             f2.write(out)
+
+            line_split = out.split('\t')
+            avg_read_length = int(line_split[6].strip())
+            final_coverage = (int(line_split[0]) * 2 * avg_read_length) / int(size)
+            f4.write(file + "\t" + str(final_coverage) + '\n')
+
         temp_final_file = "%s/%s_temp_final.txt" % (output_folder, prefix)
         sample_file = "%s/%s" % (output_folder, os.path.basename(samples))
         with open(temp_final_file, 'w') as res, open(sample_file) as f1, open(temp_forward_coverage) as f2, open(temp_reverse_coverage) as f3:
@@ -55,6 +63,7 @@ def coverage(filenames_array, Config, logger, output_folder, type, samples, size
                 print_string = line + "\t" + str(final_coverage) + "\n"
                 f3.write(print_string)
         f3.close()
+        f4.close()
 
     elif type == "SE":
         for file in filenames_array:
@@ -91,5 +100,5 @@ def coverage(filenames_array, Config, logger, output_folder, type, samples, size
                 f3.write(print_string)
         f3.close()
 
-    os.system("rm %s %s %s" % (temp_forward_coverage, temp_reverse_coverage, temp_final_file))
+    #os.system("rm %s %s %s" % (temp_forward_coverage, temp_reverse_coverage, temp_final_file))
     keep_logging('Coverage Report - %s\n' % final_coverage_file, 'Coverage Report - %s\n' % final_coverage_file, logger, 'info')

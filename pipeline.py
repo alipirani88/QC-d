@@ -22,6 +22,7 @@ from argparse import RawTextHelpFormatter
 from modules.coverage_depth import *
 from modules.kraken_report import *
 from modules.mlst import mlst
+from modules.summary import *
 
 """ Command line argument parsing """
 def parser():
@@ -146,6 +147,11 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
             mlst_directory = args.output_folder + "/%s_MLST_results" % args.prefix
             make_sure_path_exists(mlst_directory)
             mlst(filenames_array, Config, logger, mlst_directory, args.type, args.samples, mlst_directory, cluster, args.scheduler, mlstdb)
+        elif analysis == "summary":
+            keep_logging('', "Generating Summary report for QC'd analysis - %s" % args.prefix, logger, 'debug')
+            summary(filenames_array, Config, logger, args.prefix, output_folder)
+            keep_logging("Summary report - %s/%s_summary.tsv" % (output_folder, prefix), "Summary report - %s/%s_summary.tsv" % (output_folder, prefix), logger, 'info')
+
 
 """ Check Subroutines """
 
