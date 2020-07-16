@@ -112,7 +112,7 @@ Check installation
 ```
 conda activate qc_env
 
-python QC-d/pipeline.py -h
+python QC-d/qc.py -h
 ```
 
 ## Quickstart
