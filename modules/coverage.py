@@ -40,7 +40,7 @@ def coverage(filenames_array, Config, logger, output_folder, type, samples, size
             f2.write(out)
 
             line_split = out.split('\t')
-            avg_read_length = int(line_split[6].strip())
+            avg_read_length = float(line_split[6].strip())
             final_coverage = (int(line_split[0]) * 2 * avg_read_length) / int(size)
             f4.write(file + "\t" + str(final_coverage) + '\n')
 

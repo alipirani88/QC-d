@@ -94,7 +94,13 @@ notification: BEGIN,END,NONE,FAIL,REQUEUE
 [ariba]
 ariba_bin:
 base_cmd: ariba
-mlst_db_path: /nfs/esnitkin/bin_group/database/ariba/MLST_db/Clostridium_difficile/ref_db/
+mlst_db_path: /nfs/esnitkin/bin_group/database/ariba/MLST_db/Klebsiella_pneumoniae/ref_db/
+amr_db_path: /nfs/esnitkin/bin_group/database/ariba/CARD/CARD_db/
+
+[mash]
+mash_bin:
+base_cmd: mash
+mash_refseq_db: /scratch/esnitkin_root/esnitkin/apirani/Testing_pipelines/Mashtree/refseq.genomes.k21s1000.msh
 
 #mlst_db_path: /nfs/esnitkin/bin_group/database/ariba/MLST_db/Klebsiella_pneumoniae/ref_db/
 #mlst_db_path: /nfs/esnitkin/bin_group/database/ariba/MLST_db/Clostridium_difficile/ref_db/
@@ -111,7 +117,7 @@ mlst_db_path: /nfs/esnitkin/bin_group/database/ariba/MLST_db/Clostridium_diffici
 # Name of reference genome fasta file.
 Ref_Name: KPNIH1.fasta
 # path to the reference genome fasta file.
-Ref_Path: /scratch/esnitkin_root/esnitkin/apirani/Testing_pipelines/reference/KPNIH1/
+Ref_Path: /nfs/esnitkin/bin_group/variant_calling_bin/reference/KPNIH1/
 
 # Name of the reference genome. Provide this value with -index_name argument.
 [aus]
@@ -904,3 +910,10 @@ Ref_Path: /nfs/esnitkin/bin_group/variant_calling_bin/reference/Pt0_Chromosome_O
 Ref_Name: NTHi_86-028NP.fasta
 # path to the reference genome fasta file.
 Ref_Path: /nfs/esnitkin/bin_group/variant_calling_bin/reference/NTHi_86-028NP/
+
+[Aus0004]
+# Name of reference genome fasta file.
+Ref_Name: Aus0004.fasta
+# path to the reference genome fasta file.
+Ref_Path: /scratch/esnitkin_root/esnitkin/apirani/Project_VRE_metagenomics_analysis/2021_04_09_VREfm_variant_calling/Reference_genome/Aus0004/
+

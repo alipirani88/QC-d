@@ -6,7 +6,7 @@ from logging_subprocess import *
 from config_settings import ConfigSectionMap
 
 def summary(filenames_array, Config, logger, prefix, output_folder):
-    f = open("%s/summary.tsv" % (output_folder, prefix), 'w+')
+    f = open("%s/summary.tsv" % (output_folder), 'w+')
     f.write("Sample\tRaw Coverage\tMean Coverage/Read Depth\t% bases supported by atleast 1 read\t% bases supported by atleast 5 reads\t% bases supported by atleast 9 reads\t% bases supported by atleast 10 reads\tST\tSpecies" + '\n')
     for file in filenames_array:
         filename_base = os.path.basename(file)

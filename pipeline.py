@@ -23,6 +23,8 @@ from modules.coverage_depth import *
 from modules.kraken_report import *
 from modules.mlst import mlst
 from modules.summary import *
+from modules.amr import *
+from modules.mashscreen import *
 
 """ Command line argument parsing """
 def parser():
@@ -48,6 +50,12 @@ def parser():
                           required=False)
     optional.add_argument('-mlst_db', action='store', dest="mlst_db",
                           help='Ariba MLST database path',
+                          required=False)
+    optional.add_argument('-amr_db', action='store', dest="amr_db",
+                          help='Ariba AMR CARD database path',
+                          required=False)
+    optional.add_argument('-mash_refseq_db', action='store', dest="mash_refseq_db",
+                          help='Mash Refseq database Sketch',
                           required=False)
     return parser
 
@@ -107,7 +115,7 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
             make_sure_path_exists(fastqc_reverse_directory)
             Multiqc_reports_directory = args.output_folder + "/%s_Multiqc_reports" % args.prefix
             make_sure_path_exists(Multiqc_reports_directory)
-            quality(filenames_array, Config, logger, output_folder, args.type, args.samples, fastqc_forward_directory, fastqc_reverse_directory)
+            quality(filenames_array, Config, logger, output_folder, args.type, args.samples, fastqc_forward_directory, fastqc_reverse_directory, args.cluster, args.scheduler)
             multiqc(fastqc_forward_directory, "%s_Forward_fastqc" % args.prefix, Config, logger, Multiqc_reports_directory)
             multiqc(fastqc_reverse_directory, "%s_Reverse_fastqc" % args.prefix, Config, logger, Multiqc_reports_directory)
         elif analysis == "screen_contamination":
@@ -147,6 +155,32 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
             mlst_directory = args.output_folder + "/%s_MLST_results" % args.prefix
             make_sure_path_exists(mlst_directory)
             mlst(filenames_array, Config, logger, mlst_directory, args.type, args.samples, mlst_directory, cluster, args.scheduler, mlstdb)
+        elif analysis == "amr":
+            keep_logging("Step: Running Ariba AMR detection on Input reads...\n", "Running Ariba AMR detection on Input reads...", logger, 'info')
+            if args.amr_db:
+                amrdb = args.amr_db
+            else:
+                amrdb = ConfigSectionMap("ariba", Config)['amr_db_path']
+            keep_logging(
+                '',
+                "Using Ariba AMR Database from this path - %s" % amrdb,
+                logger, 'debug')
+            amr_directory = args.output_folder + "/%s_AMR_results" % args.prefix
+            make_sure_path_exists(amr_directory)
+            amr(filenames_array, Config, logger, amr_directory, args.type, args.samples, amr_directory, cluster, args.scheduler, amrdb)
+        elif analysis == "mashscreen":
+            keep_logging("Step: Running Mash Screen on Input reads...\n", "Running Mash Screen on Input reads...", logger, 'info')
+            if args.mash_refseq_db:
+                mashrefseqdb = args.mash_refseq_db
+            else:
+                mashrefseqdb = ConfigSectionMap("mash", Config)['mash_refseq_db']
+            keep_logging(
+                '',
+                "Using Mash RefSeq Database Sketch from this path - %s" % mashrefseqdb,
+                logger, 'debug')
+            mashscreen_directory = args.output_folder + "/%s_Mashscreen_results" % args.prefix
+            make_sure_path_exists(mashscreen_directory)
+            mashscreen(filenames_array, Config, logger, mashscreen_directory, args.type, args.samples, mashscreen_directory, cluster, args.scheduler, mashrefseqdb)
         elif analysis == "summary":
             keep_logging('', "Generating Summary report for QC'd analysis - %s" % args.prefix, logger, 'debug')
             summary(filenames_array, Config, logger, args.prefix, output_folder)
@@ -215,9 +249,6 @@ if __name__ == '__main__':
     Config.read(config_file)
 
     logger = generate_logger(args.output_folder, analysis_string, log_unique_time)
-
-
-
 
     # Set output directory paths
     if args.output_folder != '':
