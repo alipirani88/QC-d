@@ -2,6 +2,7 @@ __author__ = 'alipirani'
 import os
 import subprocess
 import statistics
+import json
 from modules.log_modules import keep_logging
 from logging_subprocess import *
 from config_settings import ConfigSectionMap
@@ -102,3 +103,21 @@ def coverage(filenames_array, Config, logger, output_folder, type, samples, size
 
     #os.system("rm %s %s %s" % (temp_forward_coverage, temp_reverse_coverage, temp_final_file))
     keep_logging('Coverage Report - %s\n' % final_coverage_file, 'Coverage Report - %s\n' % final_coverage_file, logger, 'info')
+
+# Faster implementation
+def coverage_fastqscan(filenames_array, Config, logger, output_folder, type, samples, size, prefix):
+    final_coverage_file = "%s/%s_Final_Coverage.txt" % (output_folder, prefix)
+    f3=open(final_coverage_file, 'w+')
+    header = "Sample_name,Total_reads,Total_bp,MeanReadLength,Coverage\n"
+    f3.write(header)
+    for file in filenames_array:
+        coverage_msg_forward = "Calculating coverage for file: %s\n" % file
+        keep_logging('', coverage_msg_forward, logger, 'debug')
+        fastqscan = "zcat %s %s | fastq-scan -g %s > /tmp/%s_coverage.json" % (file, file.replace('_R1_', '_R2_'),size, os.path.basename(file))
+        keep_logging('', fastqscan, logger, 'debug')
+        call(fastqscan, logger)
+        f = open('/tmp/%s_coverage.json' % os.path.basename(file))
+        data = json.load(f)
+        f3.write("%s,%s,%s,%s,%s\n" % (os.path.basename(file), data['qc_stats']['read_total'], data['qc_stats']['total_bp'], data['qc_stats']['read_mean'], data['qc_stats']['coverage']))
+    f3.close()
+

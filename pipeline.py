@@ -104,7 +104,7 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
     for analysis in analysis_list:
         if analysis == "coverage":
             keep_logging("Step: Calculating Coverage...\n", "Calculating Coverage", logger, 'info')
-            coverage(filenames_array, Config, logger, output_folder, args.type, args.samples, args.size, prefix)
+            coverage_fastqscan(filenames_array, Config, logger, output_folder, args.type, args.samples, args.size, prefix)
         elif analysis == "quality":
             keep_logging("Step: Analysing Fastqc Quality...\n", "Analysing Fastqc Quality...", logger, 'info')
             fastqc_main_directory = args.output_folder + "/%s_Fastqc" % args.prefix
@@ -115,9 +115,9 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
             make_sure_path_exists(fastqc_reverse_directory)
             Multiqc_reports_directory = args.output_folder + "/%s_Multiqc_reports" % args.prefix
             make_sure_path_exists(Multiqc_reports_directory)
-            quality(filenames_array, Config, logger, output_folder, args.type, args.samples, fastqc_forward_directory, fastqc_reverse_directory, args.cluster, args.scheduler)
-            multiqc(fastqc_forward_directory, "%s_Forward_fastqc" % args.prefix, Config, logger, Multiqc_reports_directory)
-            multiqc(fastqc_reverse_directory, "%s_Reverse_fastqc" % args.prefix, Config, logger, Multiqc_reports_directory)
+            quality(filenames_array, Config, logger, output_folder, args.type, args.samples, fastqc_main_directory, fastqc_forward_directory, fastqc_reverse_directory, args.cluster, args.scheduler)
+            multiqc(fastqc_forward_directory, "%s_Forward_fastqc" % args.prefix, Config, logger, Multiqc_reports_directory, cluster, args.scheduler)
+            multiqc(fastqc_reverse_directory, "%s_Reverse_fastqc" % args.prefix, Config, logger, Multiqc_reports_directory, cluster, args.scheduler)
         elif analysis == "screen_contamination":
             keep_logging("Step: Screening Fastq reads against Reference Database...\n", "Screening Fastq reads against Reference Database...", logger, 'info')
             fastq_screen_directory = args.output_folder + "/%s_Fastqc_screen" % args.prefix
@@ -259,17 +259,15 @@ if __name__ == '__main__':
 
     # Set reference genome path to map the samples and calculate coverage depth
     if "coverage_depth" in args.analysis_names:
-        try:
+        if args.reference:
             reference = ConfigSectionMap(args.reference, Config)['ref_path'] + "/" + ConfigSectionMap(args.reference, Config)['ref_name']
-        except OSError as exception:
-            if exception.errno != errno.EEXIST:
-                print "Please provide reference genome name or Check the reference genome path in config file.\n"
-                exit()
-    else:
-        reference = "NONE"
+        else:
+            print "Please provide reference genome name or Check the reference genome path in config file.\n"
+            keep_logging('\n\nNo reference genome provided. Exiting\n', '\nNo reference genome provided. Exiting\n', logger, 'error')
+            exit()
 
     # Main Workflow
-    pipeline(args, logger, Config, args.output_folder, args.prefix, reference)
+    pipeline(args, logger, Config, args.output_folder, args.prefix, args.reference)
 
     keep_logging('End: Pipeline\n', 'End: Pipeline', logger, 'info')
     time_taken = datetime.now() - start_time_2

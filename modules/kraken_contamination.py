@@ -107,7 +107,7 @@ def kraken_contamination(filenames_array, Config, logger, output_folder, type, s
 
     for file in filenames_array:
         #file_prefix = kraken_directory + "/" + os.path.basename(file)[0:20]
-	file_prefix = kraken_directory + "/" + os.path.basename(file.replace('_R1.*fastq.gz',''))
+	    file_prefix = kraken_directory + "/" + os.path.basename(file.replace('_R1.*fastq.gz',''))
         file2 = file.replace('_R1_', '_R2_')
 
         read1, read2, seqtk_downsample = downsample_reads(file, file2, genome_size, logger)
@@ -117,8 +117,7 @@ def kraken_contamination(filenames_array, Config, logger, output_folder, type, s
         kraken_cmd = seqtk_downsample
         if file.endswith('.gz'):
             file = "/tmp/%s" % os.path.basename(file)
-            kraken_cmd = kraken_cmd + '\n' + "kraken --quick --fastq-input --gzip-compressed --unclassified-out %s_unclassified.txt --db %s --output %s_kraken %s" % (
-            file_prefix, ConfigSectionMap("kraken", Config)['db_path'],
+            kraken_cmd = kraken_cmd + '\n' + "kraken --quick --fastq-input --gzip-compressed --db %s --output %s_kraken %s" % (ConfigSectionMap("kraken", Config)['db_path'],
             file_prefix, file)
             keep_logging("", kraken_cmd, logger, 'info')
             kraken_out = file_prefix + "_kraken"
