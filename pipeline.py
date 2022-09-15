@@ -25,6 +25,7 @@ from modules.mlst import mlst
 from modules.summary import *
 from modules.amr import *
 from modules.mashscreen import *
+from modules.trim import *
 
 """ Command line argument parsing """
 def parser():
@@ -185,8 +186,14 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
             keep_logging('', "Generating Summary report for QC'd analysis - %s" % args.prefix, logger, 'debug')
             summary(filenames_array, Config, logger, args.prefix, output_folder)
             keep_logging("Summary report - %s/%s_summary.tsv" % (output_folder, prefix), "Summary report - %s/%s_summary.tsv" % (output_folder, prefix), logger, 'info')
-
-
+        elif analysis == "aftertrimmultiqc":
+            keep_logging("Step: Running After Trimmomatic MultiQC on Input reads...\n", "Running After Trimmomatic MultiQC on Input reads...", logger, 'info')
+            aftertrimqc_directory = args.output_folder + "/%s_AfterTrimQC_results" % args.prefix
+            make_sure_path_exists(aftertrimqc_directory)
+            #aftertrimqc(filenames_array, Config, logger, aftertrimqc_directory, args.type, args.samples, cluster, args.scheduler)
+            clean_reads(filenames_array, args.type, aftertrimqc_directory, logger, Config, args.scheduler)
+            multiqc(aftertrimqc_directory, "%s_Forward_fastqc" % args.prefix, Config, logger, aftertrimqc_directory, cluster, args.scheduler)
+            
 """ Check Subroutines """
 
 """ Usage Message: """
@@ -271,4 +278,4 @@ if __name__ == '__main__':
 
     keep_logging('End: Pipeline\n', 'End: Pipeline', logger, 'info')
     time_taken = datetime.now() - start_time_2
-    keep_logging('Total Time taken: {}'.format(time_taken), 'Total Time taken: {}'.format(time_taken), logger, 'info')
+    #keep_logging('Total Time taken: {}'.format(time_taken), 'Total Time taken: {}'.format(time_taken), logger, 'info')
