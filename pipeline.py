@@ -278,4 +278,4 @@ if __name__ == '__main__':
 
     keep_logging('End: Pipeline\n', 'End: Pipeline', logger, 'info')
     time_taken = datetime.now() - start_time_2
-    #keep_logging('Total Time taken: {}'.format(time_taken), 'Total Time taken: {}'.format(time_taken), logger, 'info')
+    keep_logging('Total Time taken: {}'.format(time_taken), 'Total Time taken: {}'.format(time_taken), logger, 'info')
