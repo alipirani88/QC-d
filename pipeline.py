@@ -35,7 +35,7 @@ def parser():
     required.add_argument('-samples', action='store', dest="samples", help='A file containing filenames of forward-paired end or single-end reads. One Sample per line')
     optional.add_argument('-config', action='store', dest="config", help='Path to Config file, Make sure to check config settings before running pipeline.\nNote: Set Kraken database path under [kraken] config section')
     required.add_argument('-dir', action='store', dest="directory", help='Path to Sequencing Reads Data directory. NOTE: Provide full/absolute path.')
-    required.add_argument('-analysis', action='store', dest="analysis_names", help='comma-seperated analysis names to run\n[Options: coverage,quality,kraken_contamination,kraken_report,coverage_depth].\nExample: "-analysis coverage,quality" - This will estimate coverage and quality for the samples given in -samples')
+    required.add_argument('-analysis', action='store', dest="analysis_names", help='comma-seperated analysis names to run\n[Options: coverage,quality,kraken_contamination,kraken_report,coverage_depth,amr,mlst,mashscreen].\nExample: "-analysis coverage,quality" - This will estimate coverage and quality for the samples given in -samples')
     required.add_argument('-o', action='store', dest="output_folder", help='Output Folder Path ending with output directory name to save the results.\nCreates a new output directory path if it doesn\'t exist.')
     required.add_argument('-type', action='store', dest='type', help='Type of analysis: SE or PE')
     optional.add_argument('-cluster', action='store', dest='cluster', help='Run in one of the two modes. \nDefault is local for coverage and fastqc analysis.\nFor all the other analysis Default is cluster. The pipeline prefers cluster mode to generate SLURM/PBS jobs.\nModes: local or cluster')
@@ -169,6 +169,7 @@ def pipeline(args, logger, Config, output_folder, prefix, reference):
             amr_directory = args.output_folder + "/%s_AMR_results" % args.prefix
             make_sure_path_exists(amr_directory)
             amr(filenames_array, Config, logger, amr_directory, args.type, args.samples, amr_directory, cluster, args.scheduler, amrdb)
+        
         elif analysis == "mashscreen":
             keep_logging("Step: Running Mash Screen on Input reads...\n", "Running Mash Screen on Input reads...", logger, 'info')
             if args.mash_refseq_db:

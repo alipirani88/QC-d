@@ -146,24 +146,5 @@ The coverage depth jobs will be generated in prefix_Coverage_depth folder. The j
 
 The ariba mlst jobs will be generated in prefix_MLST_results folder. In order to run ARIBA MLST, you will need to activate the ariba environment (shown above - Installation step 2) and submit the jobs. Make sure to set the Ariba MLST database in config file.
 
-Once all the analysis jobs are completed, run the summary analysis to generate a summary report. This analysis will summarize the results of each individual analysis into a single summary report - summary.tsv
+Here is an example notebook on how to generate QC summaries for the individual Qc tasks that was run with this pipeline. Users can overlay different metadata such as Sequencing plate, barcode and DNA concentartions to investigate possible even of contamination either during the library prep or sequencing or naming the files.
 
-
-```
-
-python QC-d/qc.py \
--samples filenames \
--dir /Path-To-Your/test_readsdir/ \
--analysis summary \
--o /Path-To-Your/output-folder/ \
--type PE \
--genome_size 5000000 \
--prefix Test \
--cluster cluster \
--config QC-d/config \
--scheduler SLURM \
--downsample yes \
--reference KPNIH1
--dryrun
-
-```
