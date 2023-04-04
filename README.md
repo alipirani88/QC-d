@@ -146,5 +146,5 @@ The coverage depth jobs will be generated in prefix_Coverage_depth folder. The j
 
 The ariba mlst jobs will be generated in prefix_MLST_results folder. In order to run ARIBA MLST, you will need to activate the ariba environment (shown above - Installation step 2) and submit the jobs. Make sure to set the Ariba MLST database in config file.
 
-Here is an example notebook on how to generate QC summaries for the individual Qc tasks that was run with this pipeline. Users can overlay different metadata such as Sequencing plate, barcode and DNA concentartions to investigate possible even of contamination either during the library prep or sequencing or naming the files.
+Please refer to an example notebook [here](https://github.com/alipirani88/QC-d/blob/master/notebook/2023-03-15_IMPALA_Resequence.ipynb) on how to generate QC summaries for the individual Qc tasks that was run with this pipeline. Users can overlay different metadata such as Sequencing plate, barcode and DNA concentartions to investigate possible even of contamination either during the library prep or sequencing or naming the files.
 
